@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/btcsuite/btcd/btcutil/base58"
+	"github.com/babylon-chain/bbld/btcutil/base58"
 )
 
 var (

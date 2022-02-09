@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/btcsuite/btcd/wire"
+	"github.com/babylon-chain/bbld/wire"
 )
 
 var (
