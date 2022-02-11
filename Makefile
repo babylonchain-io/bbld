@@ -84,17 +84,18 @@ unit:
 	cd btcutil; $(GOTEST_DEV) ./... -test.timeout=20m
 	cd btcutil/psbt; $(GOTEST_DEV) ./... -test.timeout=20m
 
-unit-cover: $(GOACC_BIN)
-	@$(call print, "Running unit coverage tests.")
-	$(GOACC_BIN) ./...
+# TODO re add when we will deal with coverage
+# unit-cover: $(GOACC_BIN)
+# 	@$(call print, "Running unit coverage tests.")
+# 	$(GOACC_BIN) ./...
 	
-	# We need to remove the /v2 pathing from the module to have it work
-	# nicely with the CI tool we use to render live code coverage.
-	cd btcec; $(GOACC_BIN) ./...; sed -i.bak 's/v2\///g' coverage.txt
+# 	# We need to remove the /v2 pathing from the module to have it work
+# 	# nicely with the CI tool we use to render live code coverage.
+# 	cd btcec; $(GOACC_BIN) ./...; sed -i.bak 's/v2\///g' coverage.txt
 
-	cd btcutil; $(GOACC_BIN) ./...
+# 	cd btcutil; $(GOACC_BIN) ./...
 
-	cd btcutil/psbt; $(GOACC_BIN) ./...
+# 	cd btcutil/psbt; $(GOACC_BIN) ./...
 
 unit-race:
 	@$(call print, "Running unit race tests.")

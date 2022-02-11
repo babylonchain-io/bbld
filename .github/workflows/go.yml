@@ -23,8 +23,8 @@ jobs:
       - name: Build
         run: make build
 
-  test-cover:
-    name: Unit coverage
+  test:
+    name: Unit
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -36,27 +36,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test
-        run: make unit-cover
-
-      - name: Send top-level coverage
-        uses: shogo82148/actions-goveralls@v1
-        with:
-          path-to-profile: coverage.txt
-
-      - name: Send btcec
-        uses: shogo82148/actions-goveralls@v1
-        with:
-          path-to-profile: btcec/coverage.txt
-
-      - name: Send btcutil coverage
-        uses: shogo82148/actions-goveralls@v1
-        with:
-          path-to-profile: btcutil/coverage.txt
-
-      - name: Send btcutil coverage for psbt package
-        uses: shogo82148/actions-goveralls@v1
-        with:
-          path-to-profile: btcutil/psbt/coverage.txt
+        run: make unit
 
   test-race:
     name: Unit race
