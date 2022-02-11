@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
 )
 
 // MaxBlockLocatorsPerMsg is the maximum number of block locator hashes allowed

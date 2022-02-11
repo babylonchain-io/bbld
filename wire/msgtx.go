@@ -10,7 +10,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
 )
 
 const (

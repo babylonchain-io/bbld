@@ -10,11 +10,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/babylon-chain/bbld/blockchain"
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/database"
-	_ "github.com/babylon-chain/bbld/database/ffldb"
+	"github.com/KonradStaniec/test-node/blockchain"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/database"
+	_ "github.com/KonradStaniec/test-node/database/ffldb"
 )
 
 // This example demonstrates how to create a new chain instance and use

@@ -49,7 +49,7 @@ func btcdExecutablePath() (string, error) {
 		outputPath += ".exe"
 	}
 	cmd := exec.Command(
-		"go", "build", "-o", outputPath, "github.com/babylon-chain/bbld",
+		"go", "build", "-o", outputPath, "github.com/KonradStaniec/test-node",
 	)
 	err = cmd.Run()
 	if err != nil {

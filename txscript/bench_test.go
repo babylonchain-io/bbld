@@ -10,8 +10,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 var (

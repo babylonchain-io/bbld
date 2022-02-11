@@ -8,9 +8,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/babylon-chain/bbld/btcec"
-	"github.com/babylon-chain/bbld/btcec/ecdsa"
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/btcec"
+	"github.com/KonradStaniec/test-node/btcec/ecdsa"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
 )
 
 // This example demonstrates signing a message with a secp256k1 private key that

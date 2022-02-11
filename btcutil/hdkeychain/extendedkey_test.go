@@ -17,7 +17,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/chaincfg"
+	"github.com/KonradStaniec/test-node/chaincfg"
 	secp_ecdsa "github.com/decred/dcrd/dcrec/secp256k1/v4"
 )
 

@@ -8,7 +8,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/babylon-chain/bbld/database"
+	"github.com/KonradStaniec/test-node/database"
 )
 
 // TestErrorCodeStringer tests the stringized output for the ErrorCode type.

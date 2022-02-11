@@ -7,7 +7,7 @@ package blockchain
 import (
 	"testing"
 
-	"github.com/babylon-chain/bbld/chaincfg"
+	"github.com/KonradStaniec/test-node/chaincfg"
 )
 
 // TestNotifications ensures that notification callbacks are fired on events.

@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // randAddr generates a *wire.NetAddress backed by a random IPv4/IPv6 address.

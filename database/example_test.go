@@ -11,11 +11,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/database"
-	_ "github.com/babylon-chain/bbld/database/ffldb"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/database"
+	_ "github.com/KonradStaniec/test-node/database/ffldb"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // This example demonstrates creating a new database.
@@ -23,8 +23,8 @@ func ExampleCreate() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/babylon-chain/bbld/database"
-	// 	_ "github.com/babylon-chain/bbld/database/ffldb"
+	// 	"github.com/KonradStaniec/test-node/database"
+	// 	_ "github.com/KonradStaniec/test-node/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.
@@ -49,8 +49,8 @@ func Example_basicUsage() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/babylon-chain/bbld/database"
-	// 	_ "github.com/babylon-chain/bbld/database/ffldb"
+	// 	"github.com/KonradStaniec/test-node/database"
+	// 	_ "github.com/KonradStaniec/test-node/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.
@@ -115,8 +115,8 @@ func Example_blockStorageAndRetrieval() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/babylon-chain/bbld/database"
-	// 	_ "github.com/babylon-chain/bbld/database/ffldb"
+	// 	"github.com/KonradStaniec/test-node/database"
+	// 	_ "github.com/KonradStaniec/test-node/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.

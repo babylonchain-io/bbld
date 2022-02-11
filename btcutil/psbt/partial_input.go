@@ -6,8 +6,8 @@ import (
 	"io"
 	"sort"
 
-	"github.com/babylon-chain/bbld/txscript"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/txscript"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // PInput is a struct encapsulating all the data that can be attached to any

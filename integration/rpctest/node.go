@@ -14,8 +14,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/babylon-chain/bbld/btcutil"
-	rpc "github.com/babylon-chain/bbld/rpcclient"
+	"github.com/KonradStaniec/test-node/btcutil"
+	rpc "github.com/KonradStaniec/test-node/rpcclient"
 )
 
 // nodeConfig contains all the args, and data required to launch a btcd process

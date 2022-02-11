@@ -5,10 +5,10 @@
 package bloom
 
 import (
-	"github.com/babylon-chain/bbld/blockchain"
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/blockchain"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // merkleBlock is used to house intermediate information needed to generate a

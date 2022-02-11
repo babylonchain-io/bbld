@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/babylon-chain/bbld/chaincfg"
+	. "github.com/KonradStaniec/test-node/chaincfg"
 )
 
 // Define some of the required parameters for a user-registered

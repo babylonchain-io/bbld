@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/babylon-chain/bbld/btcec"
+	"github.com/KonradStaniec/test-node/btcec"
 	secp_ecdsa "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	ecdsa_schnorr "github.com/decred/dcrd/dcrec/secp256k1/v4/schnorr"
 )

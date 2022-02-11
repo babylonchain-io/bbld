@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/database"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/database"
 )
 
 // blockRegionCmd defines the configuration options for the fetchblockregion

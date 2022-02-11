@@ -1,9 +1,9 @@
 btcutil
 =======
 
-[![Build Status](https://github.com/babylon-chain/bbld/btcutil/workflows/Build%20and%20Test/badge.svg)](https://github.com/babylon-chain/bbld/btcutil/actions)
+[![Build Status](https://github.com/KonradStaniec/test-node/btcutil/workflows/Build%20and%20Test/badge.svg)](https://github.com/KonradStaniec/test-node/btcutil/actions)
 [![ISC License](https://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/babylon-chain/bbld/btcutil)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/KonradStaniec/test-node/btcutil)
 
 Package btcutil provides bitcoin-specific convenience functions and types.
 A comprehensive suite of tests is provided to ensure proper functionality.  See
@@ -20,7 +20,7 @@ provided.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/babylon-chain/bbld/btcutil
+$ go get -u github.com/KonradStaniec/test-node/btcutil
 ```
 
 ## GPG Verification Key

@@ -1,14 +1,14 @@
-module github.com/babylon-chain/bbld
+module github.com/KonradStaniec/test-node
 
-// https://github.com/babylon-chain/bbld.git
+// https://github.com/KonradStaniec/test-node.git
 
-replace github.com/babylon-chain/bbld/btcutil => ./btcutil
+replace github.com/KonradStaniec/test-node/btcutil => ./btcutil
 
-replace github.com/babylon-chain/bbld/btcec => ./btcec
+replace github.com/KonradStaniec/test-node/btcec => ./btcec
 
 require (
-	github.com/babylon-chain/bbld/btcec v0.0.0-00010101000000-000000000000
-	github.com/babylon-chain/bbld/btcutil v0.0.0-00010101000000-000000000000
+	github.com/KonradStaniec/test-node/btcec v0.0.0-00010101000000-000000000000
+	github.com/KonradStaniec/test-node/btcutil v0.0.0-00010101000000-000000000000
 	github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f
 	github.com/btcsuite/go-socks v0.0.0-20170105172521-4720035b7bfd
 	github.com/btcsuite/goleveldb v1.0.0

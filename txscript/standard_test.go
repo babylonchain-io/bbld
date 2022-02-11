@@ -11,9 +11,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // mustParseShortForm parses the passed short form script and returns the

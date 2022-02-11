@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/btcjson"
+	"github.com/KonradStaniec/test-node/btcjson"
 )
 
 // TestChainSvrWsCmds tests all of the chain server websocket-specific commands

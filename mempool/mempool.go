@@ -12,15 +12,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/babylon-chain/bbld/blockchain"
-	"github.com/babylon-chain/bbld/blockchain/indexers"
-	"github.com/babylon-chain/bbld/btcjson"
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/mining"
-	"github.com/babylon-chain/bbld/txscript"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/blockchain"
+	"github.com/KonradStaniec/test-node/blockchain/indexers"
+	"github.com/KonradStaniec/test-node/btcjson"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/mining"
+	"github.com/KonradStaniec/test-node/txscript"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 const (

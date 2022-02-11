@@ -1,9 +1,9 @@
 txscript
 ========
 
-[![Build Status](https://github.com/babylon-chain/bbld/workflows/Build%20and%20Test/badge.svg)](https://github.com/babylon-chain/bbld/actions)
+[![Build Status](https://github.com/KonradStaniec/test-node/workflows/Build%20and%20Test/badge.svg)](https://github.com/KonradStaniec/test-node/actions)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://pkg.go.dev/github.com/babylon-chain/bbld/txscript?status.png)](https://pkg.go.dev/github.com/babylon-chain/bbld/txscript)
+[![GoDoc](https://pkg.go.dev/github.com/KonradStaniec/test-node/txscript?status.png)](https://pkg.go.dev/github.com/KonradStaniec/test-node/txscript)
 
 Package txscript implements the bitcoin transaction script language.  There is
 a comprehensive test suite.
@@ -21,20 +21,20 @@ can be found at https://en.bitcoin.it/wiki/Script
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/babylon-chain/bbld/txscript
+$ go get -u github.com/KonradStaniec/test-node/txscript
 ```
 
 ## Examples
 
-* [Standard Pay-to-pubkey-hash Script](https://pkg.go.dev/github.com/babylon-chain/bbld/txscript#example-PayToAddrScript)  
+* [Standard Pay-to-pubkey-hash Script](https://pkg.go.dev/github.com/KonradStaniec/test-node/txscript#example-PayToAddrScript)  
   Demonstrates creating a script which pays to a bitcoin address.  It also
   prints the created script hex and uses the DisasmString function to display
   the disassembled script.
 
-* [Extracting Details from Standard Scripts](https://pkg.go.dev/github.com/babylon-chain/bbld/txscript#example-ExtractPkScriptAddrs)  
+* [Extracting Details from Standard Scripts](https://pkg.go.dev/github.com/KonradStaniec/test-node/txscript#example-ExtractPkScriptAddrs)  
   Demonstrates extracting information from a standard public key script.
 
-* [Manually Signing a Transaction Output](https://pkg.go.dev/github.com/babylon-chain/bbld/txscript#example-SignTxOutput)  
+* [Manually Signing a Transaction Output](https://pkg.go.dev/github.com/KonradStaniec/test-node/txscript#example-SignTxOutput)  
   Demonstrates manually creating and signing a redeem transaction.
 
 * [Counting Opcodes in Scripts](http://godoc.org/github.com/decred/dcrd/txscript#example-ScriptTokenizer)  

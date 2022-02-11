@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 var (

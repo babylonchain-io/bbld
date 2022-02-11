@@ -14,7 +14,7 @@ import (
 
 	"io"
 
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // psbtMagicLength is the length of the magic bytes used to signal the start of

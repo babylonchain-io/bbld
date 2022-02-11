@@ -8,8 +8,8 @@ import (
 	"net"
 	"testing"
 
-	"github.com/babylon-chain/bbld/addrmgr"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/addrmgr"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // TestIPTypes ensures the various functions which determine the type of an IP

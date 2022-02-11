@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/babylon-chain/bbld/txscript"
+	"github.com/KonradStaniec/test-node/txscript"
 )
 
 // CreateWalletResult models the result of the createwallet command.

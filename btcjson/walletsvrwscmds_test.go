@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/btcjson"
+	"github.com/KonradStaniec/test-node/btcjson"
 )
 
 // TestWalletSvrWsCmds tests all of the wallet server websocket-specific

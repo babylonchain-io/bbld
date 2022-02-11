@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
 )
 
 // defaultTransactionAlloc is the default size used for the backing array

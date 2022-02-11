@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/babylon-chain/bbld/txscript"
+	"github.com/KonradStaniec/test-node/txscript"
 )
 
 // TestCheckBlockScripts ensures that validating the all of the scripts in a

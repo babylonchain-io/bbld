@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // These variables are the chain proof-of-work limit parameters for each default

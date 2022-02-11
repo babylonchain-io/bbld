@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/babylon-chain/bbld/blockchain"
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/txscript"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/blockchain"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/txscript"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 const (

@@ -11,8 +11,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/database"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/database"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // TestErrNotInMainChain ensures the functions related to errNotInMainChain work

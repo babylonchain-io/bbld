@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 const (

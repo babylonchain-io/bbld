@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/babylon-chain/bbld/txscript"
+	"github.com/KonradStaniec/test-node/txscript"
 	"github.com/davecgh/go-spew/spew"
 )
 

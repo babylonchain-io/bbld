@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // TestParsePkScript ensures that the supported script types can be parsed

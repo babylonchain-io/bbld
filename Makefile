@@ -1,4 +1,4 @@
-PKG := github.com/babylon-chain/bbld
+PKG := github.com/KonradStaniec/test-node
 
 LINT_PKG := github.com/golangci/golangci-lint/cmd/golangci-lint
 GOACC_PKG := github.com/ory/go-acc

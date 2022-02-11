@@ -8,8 +8,8 @@ package schnorr
 import (
 	"fmt"
 
-	"github.com/babylon-chain/bbld/btcec"
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/btcec"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
 	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	ecdsa_schnorr "github.com/decred/dcrd/dcrec/secp256k1/v4/schnorr"
 )

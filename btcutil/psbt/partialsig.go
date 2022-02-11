@@ -3,8 +3,8 @@ package psbt
 import (
 	"bytes"
 
-	"github.com/babylon-chain/bbld/btcec"
-	"github.com/babylon-chain/bbld/btcec/ecdsa"
+	"github.com/KonradStaniec/test-node/btcec"
+	"github.com/KonradStaniec/test-node/btcec/ecdsa"
 )
 
 // PartialSig encapsulate a (BTC public key, ECDSA signature)

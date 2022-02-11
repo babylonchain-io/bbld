@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/wire"
 )
 
 // OutOfRangeError describes an error due to accessing an element that is out

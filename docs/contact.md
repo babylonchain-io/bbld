@@ -11,5 +11,5 @@
 
 ## Issue Tracker
 
-The [integrated github issue tracker](https://github.com/babylon-chain/bbld/issues)
+The [integrated github issue tracker](https://github.com/KonradStaniec/test-node/issues)
 is used for this project.

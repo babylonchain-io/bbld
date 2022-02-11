@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"hash/crc32"
 
-	"github.com/babylon-chain/bbld/database"
+	"github.com/KonradStaniec/test-node/database"
 )
 
 // The serialized write cursor location format is:

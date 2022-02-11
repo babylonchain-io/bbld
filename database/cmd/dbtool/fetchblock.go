@@ -9,8 +9,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/database"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/database"
 )
 
 // fetchBlockCmd defines the configuration options for the fetchblock command.

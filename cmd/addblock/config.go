@@ -9,11 +9,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/babylon-chain/bbld/btcutil"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/database"
-	_ "github.com/babylon-chain/bbld/database/ffldb"
-	"github.com/babylon-chain/bbld/wire"
+	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/database"
+	_ "github.com/KonradStaniec/test-node/database/ffldb"
+	"github.com/KonradStaniec/test-node/wire"
 	flags "github.com/jessevdk/go-flags"
 )
 

@@ -16,11 +16,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/babylon-chain/bbld/blockchain"
-	"github.com/babylon-chain/bbld/chaincfg"
-	"github.com/babylon-chain/bbld/chaincfg/chainhash"
-	"github.com/babylon-chain/bbld/integration/rpctest"
-	"github.com/babylon-chain/bbld/rpcclient"
+	"github.com/KonradStaniec/test-node/blockchain"
+	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/KonradStaniec/test-node/integration/rpctest"
+	"github.com/KonradStaniec/test-node/rpcclient"
 )
 
 func testGetBestBlock(r *rpctest.Harness, t *testing.T) {
