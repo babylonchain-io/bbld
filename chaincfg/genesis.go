@@ -7,8 +7,8 @@ package chaincfg
 import (
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // genesisCoinbaseTx is the coinbase transaction for the genesis blocks for

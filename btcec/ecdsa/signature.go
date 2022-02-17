@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/KonradStaniec/test-node/btcec"
+	"github.com/babylonchain-io/bbld/btcec"
 	secp_ecdsa "github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 )
 

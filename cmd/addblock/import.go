@@ -11,12 +11,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/KonradStaniec/test-node/blockchain"
-	"github.com/KonradStaniec/test-node/blockchain/indexers"
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/blockchain"
+	"github.com/babylonchain-io/bbld/blockchain/indexers"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 var zeroHash = chainhash.Hash{}

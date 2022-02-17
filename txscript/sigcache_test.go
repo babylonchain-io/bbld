@@ -8,9 +8,9 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcec"
-	"github.com/KonradStaniec/test-node/btcec/ecdsa"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/btcec"
+	"github.com/babylonchain-io/bbld/btcec/ecdsa"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 // genRandomSig returns a random message, a signature of the message under the

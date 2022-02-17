@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // blockStatus is a bit field representing the validation state of the block.

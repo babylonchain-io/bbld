@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // testNoncePrng provides a deterministic prng for the nonce in generated fake

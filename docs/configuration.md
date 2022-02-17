@@ -1,6 +1,6 @@
 # Configuration
 
-btcd has a number of [configuration](https://pkg.go.dev/github.com/KonradStaniec/test-node)
+btcd has a number of [configuration](https://pkg.go.dev/github.com/babylonchain-io/bbld)
 options, which can be viewed by running: `$ btcd --help`.
 
 ## Peer server listen interface

@@ -11,8 +11,8 @@ import (
 	"io"
 	"sort"
 
-	"github.com/KonradStaniec/test-node/wire"
 	"github.com/aead/siphash"
+	"github.com/babylonchain-io/bbld/wire"
 	"github.com/kkdai/bstream"
 )
 

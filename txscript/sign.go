@@ -7,12 +7,12 @@ package txscript
 import (
 	"errors"
 
-	"github.com/KonradStaniec/test-node/btcec/ecdsa"
+	"github.com/babylonchain-io/bbld/btcec/ecdsa"
 
-	"github.com/KonradStaniec/test-node/btcec"
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/btcec"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // RawTxInWitnessSignature returns the serialized ECDA signature for the input

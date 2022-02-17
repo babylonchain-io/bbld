@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/KonradStaniec/test-node/rpcclient"
+	"github.com/babylonchain-io/bbld/rpcclient"
 )
 
 func main() {

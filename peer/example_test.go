@@ -10,9 +10,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/peer"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/peer"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // mockRemotePeer creates a basic inbound peer listening on the simnet port for

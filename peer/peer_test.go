@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/peer"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/peer"
+	"github.com/babylonchain-io/bbld/wire"
 	"github.com/btcsuite/go-socks/socks"
 )
 

@@ -5,7 +5,7 @@ import (
 	"io"
 	"sort"
 
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // POutput is a struct encapsulating all the data that can be attached

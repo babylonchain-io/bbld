@@ -1,37 +1,37 @@
 # Developer Resources
 
-* [Code Contribution Guidelines](https://github.com/KonradStaniec/test-node/tree/master/docs/code_contribution_guidelines.md)
+* [Code Contribution Guidelines](https://github.com/babylonchain-io/bbld/tree/master/docs/code_contribution_guidelines.md)
 
-* [JSON-RPC Reference](https://github.com/KonradStaniec/test-node/tree/master/docs/json_rpc_api.md)
-  * [RPC Examples](https://github.com/KonradStaniec/test-node/tree/master/docs/json_rpc_api.md#ExampleCode)
+* [JSON-RPC Reference](https://github.com/babylonchain-io/bbld/tree/master/docs/json_rpc_api.md)
+  * [RPC Examples](https://github.com/babylonchain-io/bbld/tree/master/docs/json_rpc_api.md#ExampleCode)
 
 * The btcsuite Bitcoin-related Go Packages:
-  * [btcrpcclient](https://github.com/KonradStaniec/test-node/tree/master/rpcclient) - Implements a
+  * [btcrpcclient](https://github.com/babylonchain-io/bbld/tree/master/rpcclient) - Implements a
     robust and easy to use Websocket-enabled Bitcoin JSON-RPC client
-  * [btcjson](https://github.com/KonradStaniec/test-node/tree/master/btcjson) - Provides an extensive API
+  * [btcjson](https://github.com/babylonchain-io/bbld/tree/master/btcjson) - Provides an extensive API
     for the underlying JSON-RPC command and return values
-  * [wire](https://github.com/KonradStaniec/test-node/tree/master/wire) - Implements the
+  * [wire](https://github.com/babylonchain-io/bbld/tree/master/wire) - Implements the
     Bitcoin wire protocol
-  * [peer](https://github.com/KonradStaniec/test-node/tree/master/peer) -
+  * [peer](https://github.com/babylonchain-io/bbld/tree/master/peer) -
     Provides a common base for creating and managing Bitcoin network peers.
-  * [blockchain](https://github.com/KonradStaniec/test-node/tree/master/blockchain) -
+  * [blockchain](https://github.com/babylonchain-io/bbld/tree/master/blockchain) -
     Implements Bitcoin block handling and chain selection rules
-  * [blockchain/fullblocktests](https://github.com/KonradStaniec/test-node/tree/master/blockchain/fullblocktests) -
+  * [blockchain/fullblocktests](https://github.com/babylonchain-io/bbld/tree/master/blockchain/fullblocktests) -
     Provides a set of block tests for testing the consensus validation rules
-  * [txscript](https://github.com/KonradStaniec/test-node/tree/master/txscript) -
+  * [txscript](https://github.com/babylonchain-io/bbld/tree/master/txscript) -
     Implements the Bitcoin transaction scripting language
-  * [btcec](https://github.com/KonradStaniec/test-node/tree/master/btcec) - Implements
+  * [btcec](https://github.com/babylonchain-io/bbld/tree/master/btcec) - Implements
     support for the elliptic curve cryptographic functions needed for the
     Bitcoin scripts
-  * [database](https://github.com/KonradStaniec/test-node/tree/master/database) -
+  * [database](https://github.com/babylonchain-io/bbld/tree/master/database) -
     Provides a database interface for the Bitcoin block chain
-  * [mempool](https://github.com/KonradStaniec/test-node/tree/master/mempool) -
+  * [mempool](https://github.com/babylonchain-io/bbld/tree/master/mempool) -
     Package mempool provides a policy-enforced pool of unmined bitcoin
     transactions.
-  * [btcutil](https://github.com/KonradStaniec/test-node/btcutil) - Provides Bitcoin-specific
+  * [btcutil](https://github.com/babylonchain-io/bbld/btcutil) - Provides Bitcoin-specific
     convenience functions and types
-  * [chainhash](https://github.com/KonradStaniec/test-node/tree/master/chaincfg/chainhash) -
+  * [chainhash](https://github.com/babylonchain-io/bbld/tree/master/chaincfg/chainhash) -
     Provides a generic hash type and associated functions that allows the
     specific hash algorithm to be abstracted.
-  * [connmgr](https://github.com/KonradStaniec/test-node/tree/master/connmgr) -
+  * [connmgr](https://github.com/babylonchain-io/bbld/tree/master/connmgr) -
     Package connmgr implements a generic Bitcoin network connection manager.

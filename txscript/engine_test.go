@@ -8,8 +8,8 @@ package txscript
 import (
 	"testing"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // TestBadPC sets the pc to a deliberately bad result then confirms that Step

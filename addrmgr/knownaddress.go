@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // KnownAddress tracks information about a known network address that is used

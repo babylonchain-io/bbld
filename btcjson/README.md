@@ -1,9 +1,9 @@
 btcjson
 =======
 
-[![Build Status](https://github.com/KonradStaniec/test-node/workflows/Build%20and%20Test/badge.svg)](https://github.com/KonradStaniec/test-node/actions)
+[![Build Status](https://github.com/babylonchain-io/bbld/workflows/Build%20and%20Test/badge.svg)](https://github.com/babylonchain-io/bbld/actions)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/KonradStaniec/test-node/btcjson)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/babylonchain-io/bbld/btcjson)
 
 Package btcjson implements concrete types for marshalling to and from the
 bitcoin JSON-RPC API.  A comprehensive suite of tests is provided to ensure
@@ -25,22 +25,22 @@ ints, etc) to higher-level types with many nice and useful properties.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/KonradStaniec/test-node/btcjson
+$ go get -u github.com/babylonchain-io/bbld/btcjson
 ```
 
 ## Examples
 
-* [Marshal Command](https://pkg.go.dev/github.com/KonradStaniec/test-node/btcjson#example-MarshalCmd)  
+* [Marshal Command](https://pkg.go.dev/github.com/babylonchain-io/bbld/btcjson#example-MarshalCmd)  
   Demonstrates how to create and marshal a command into a JSON-RPC request.
 
-* [Unmarshal Command](https://pkg.go.dev/github.com/KonradStaniec/test-node/btcjson#example-UnmarshalCmd)  
+* [Unmarshal Command](https://pkg.go.dev/github.com/babylonchain-io/bbld/btcjson#example-UnmarshalCmd)  
   Demonstrates how to unmarshal a JSON-RPC request and then unmarshal the
   concrete request into a concrete command.
 
-* [Marshal Response](https://pkg.go.dev/github.com/KonradStaniec/test-node/btcjson#example-MarshalResponse)  
+* [Marshal Response](https://pkg.go.dev/github.com/babylonchain-io/bbld/btcjson#example-MarshalResponse)  
   Demonstrates how to marshal a JSON-RPC response.
 
-* [Unmarshal Response](https://pkg.go.dev/github.com/KonradStaniec/test-node/btcjson#example-package--UnmarshalResponse)  
+* [Unmarshal Response](https://pkg.go.dev/github.com/babylonchain-io/bbld/btcjson#example-package--UnmarshalResponse)  
   Demonstrates how to unmarshal a JSON-RPC response and then unmarshal the
   result field in the response to a concrete type.
 

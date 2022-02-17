@@ -8,7 +8,7 @@ import (
 	"math"
 	"testing"
 
-	. "github.com/KonradStaniec/test-node/btcutil"
+	. "github.com/babylonchain-io/bbld/btcutil"
 )
 
 func TestAmountCreation(t *testing.T) {

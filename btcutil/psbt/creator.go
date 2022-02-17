@@ -5,7 +5,7 @@
 package psbt
 
 import (
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // MinTxVersion is the lowest transaction version that we'll permit.

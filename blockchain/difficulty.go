@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 var (

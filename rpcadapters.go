@@ -7,13 +7,13 @@ package main
 import (
 	"sync/atomic"
 
-	"github.com/KonradStaniec/test-node/blockchain"
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/mempool"
-	"github.com/KonradStaniec/test-node/netsync"
-	"github.com/KonradStaniec/test-node/peer"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/blockchain"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/mempool"
+	"github.com/babylonchain-io/bbld/netsync"
+	"github.com/babylonchain-io/bbld/peer"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // rpcPeer provides a peer for use with the RPC server and implements the
