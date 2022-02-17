@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
 )
 
 // BehaviorFlags is a bitmask defining tweaks to the normal behavior when

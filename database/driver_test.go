@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/database"
-	_ "github.com/KonradStaniec/test-node/database/ffldb"
+	"github.com/babylonchain-io/bbld/database"
+	_ "github.com/babylonchain-io/bbld/database/ffldb"
 )
 
 var (

@@ -7,7 +7,7 @@ package wire
 import (
 	"io"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 // MsgGetCFHeaders is a message similar to MsgGetHeaders, but for committed

@@ -1,9 +1,9 @@
 wire
 ====
 
-[![Build Status](https://github.com/KonradStaniec/test-node/workflows/Build%20and%20Test/badge.svg)](https://github.com/KonradStaniec/test-node/actions)
+[![Build Status](https://github.com/babylonchain-io/bbld/workflows/Build%20and%20Test/badge.svg)](https://github.com/babylonchain-io/bbld/actions)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/KonradStaniec/test-node/wire)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/babylonchain-io/bbld/wire)
 =======
 
 Package wire implements the bitcoin wire protocol.  A comprehensive suite of
@@ -19,7 +19,7 @@ protocol level.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/KonradStaniec/test-node/wire
+$ go get -u github.com/babylonchain-io/bbld/wire
 ```
 
 ## Bitcoin Message Overview

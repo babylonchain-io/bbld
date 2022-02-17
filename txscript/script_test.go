@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // TestPushedData ensured the PushedData function extracts the expected data out

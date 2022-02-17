@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcutil/base58"
+	"github.com/babylonchain-io/bbld/btcutil/base58"
 )
 
 var (

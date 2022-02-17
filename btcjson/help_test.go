@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcjson"
+	"github.com/babylonchain-io/bbld/btcjson"
 )
 
 // TestHelpReflectInternals ensures the various help functions which deal with

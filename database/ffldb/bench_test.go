@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/database"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/database"
 )
 
 // BenchmarkBlockHeader benchmarks how long it takes to load the mainnet genesis

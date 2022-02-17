@@ -8,10 +8,10 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/KonradStaniec/test-node/btcec"
-	"github.com/KonradStaniec/test-node/btcutil/base58"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/btcec"
+	"github.com/babylonchain-io/bbld/btcutil/base58"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 // ErrMalformedPrivateKey describes an error where a WIF-encoded private

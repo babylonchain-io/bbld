@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // AddNodeSubCmd defines the type used in the addnode JSON-RPC command for the

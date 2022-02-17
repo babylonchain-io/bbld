@@ -1,9 +1,9 @@
 cpuminer
 ========
 
-[![Build Status](https://github.com/KonradStaniec/test-node/workflows/Build%20and%20Test/badge.svg)](https://github.com/KonradStaniec/test-node/actions)
+[![Build Status](https://github.com/babylonchain-io/bbld/workflows/Build%20and%20Test/badge.svg)](https://github.com/babylonchain-io/bbld/actions)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/KonradStaniec/test-node/mining/cpuminer)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/babylonchain-io/bbld/mining/cpuminer)
 =======
 
 ## Overview
@@ -16,7 +16,7 @@ now.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/KonradStaniec/test-node/mining/cpuminer
+$ go get -u github.com/babylonchain-io/bbld/mining/cpuminer
 ```
 
 ## License

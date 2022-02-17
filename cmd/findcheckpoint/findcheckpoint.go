@@ -9,10 +9,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/KonradStaniec/test-node/blockchain"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
+	"github.com/babylonchain-io/bbld/blockchain"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
 )
 
 const blockDbNamePrefix = "blocks"

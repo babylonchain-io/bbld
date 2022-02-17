@@ -7,7 +7,7 @@ package blockchain
 import (
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcutil"
+	"github.com/babylonchain-io/bbld/btcutil"
 )
 
 // BenchmarkIsCoinBase performs a simple benchmark against the IsCoinBase

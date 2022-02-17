@@ -8,10 +8,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/KonradStaniec/test-node/blockchain"
-	"github.com/KonradStaniec/test-node/blockchain/indexers"
-	"github.com/KonradStaniec/test-node/database"
-	"github.com/KonradStaniec/test-node/limits"
+	"github.com/babylonchain-io/bbld/blockchain"
+	"github.com/babylonchain-io/bbld/blockchain/indexers"
+	"github.com/babylonchain-io/bbld/database"
+	"github.com/babylonchain-io/bbld/limits"
 	"github.com/btcsuite/btclog"
 )
 

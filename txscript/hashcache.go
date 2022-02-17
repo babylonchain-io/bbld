@@ -7,8 +7,8 @@ package txscript
 import (
 	"sync"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // TxSigHashes houses the partial set of sighashes introduced within BIP0143.

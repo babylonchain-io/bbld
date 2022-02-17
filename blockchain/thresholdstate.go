@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // ThresholdState define the various threshold states used when voting on

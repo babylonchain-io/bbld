@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcjson"
+	"github.com/babylonchain-io/bbld/btcjson"
 )
 
 // TestHelpers tests the various helper functions which create pointers to

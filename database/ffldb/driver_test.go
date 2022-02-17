@@ -11,10 +11,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/database"
-	"github.com/KonradStaniec/test-node/database/ffldb"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/database"
+	"github.com/babylonchain-io/bbld/database/ffldb"
 )
 
 // dbType is the database type name for this driver.

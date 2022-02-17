@@ -12,8 +12,8 @@ package psbt
 import (
 	"bytes"
 
-	"github.com/KonradStaniec/test-node/txscript"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/txscript"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // Extract takes a finalized psbt.Packet and outputs a finalized transaction

@@ -11,8 +11,8 @@ import (
 	"bytes"
 	"sort"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // InPlaceSort modifies the passed transaction inputs and outputs to be sorted

@@ -25,8 +25,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/KonradStaniec/test-node/btcjson"
-	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/babylonchain-io/bbld/btcjson"
+	"github.com/babylonchain-io/bbld/chaincfg"
 	"github.com/btcsuite/go-socks/socks"
 	"github.com/btcsuite/websocket"
 )

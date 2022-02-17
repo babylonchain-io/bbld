@@ -12,15 +12,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/KonradStaniec/test-node/blockchain"
-	"github.com/KonradStaniec/test-node/blockchain/fullblocktests"
-	"github.com/KonradStaniec/test-node/btcutil"
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
-	_ "github.com/KonradStaniec/test-node/database/ffldb"
-	"github.com/KonradStaniec/test-node/txscript"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/blockchain"
+	"github.com/babylonchain-io/bbld/blockchain/fullblocktests"
+	"github.com/babylonchain-io/bbld/btcutil"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
+	_ "github.com/babylonchain-io/bbld/database/ffldb"
+	"github.com/babylonchain-io/bbld/txscript"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 const (

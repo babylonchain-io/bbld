@@ -7,8 +7,8 @@ package main
 import (
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
-	"github.com/KonradStaniec/test-node/database"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/database"
 )
 
 // headersCmd defines the configuration options for the loadheaders command.

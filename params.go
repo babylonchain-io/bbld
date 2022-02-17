@@ -5,8 +5,8 @@
 package main
 
 import (
-	"github.com/KonradStaniec/test-node/chaincfg"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/chaincfg"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // activeNetParams is a pointer to the parameters specific to the

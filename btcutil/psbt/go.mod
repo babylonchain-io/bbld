@@ -1,11 +1,11 @@
-module github.com/KonradStaniec/test-node/btcutil/psbt
+module github.com/babylonchain-io/bbld/btcutil/psbt
 
 go 1.17
 
 require (
-	github.com/KonradStaniec/test-node v0.0.0-00010101000000-000000000000
-	github.com/KonradStaniec/test-node/btcec v0.0.0-00010101000000-000000000000
-	github.com/KonradStaniec/test-node/btcutil v0.0.0-00010101000000-000000000000
+	github.com/babylonchain-io/bbld v0.0.0-00010101000000-000000000000
+	github.com/babylonchain-io/bbld/btcec v0.0.0-00010101000000-000000000000
+	github.com/babylonchain-io/bbld/btcutil v0.0.0-00010101000000-000000000000
 	github.com/davecgh/go-spew v1.1.1
 )
 
@@ -15,8 +15,8 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 )
 
-replace github.com/KonradStaniec/test-node/btcec => ../../btcec
+replace github.com/babylonchain-io/bbld/btcec => ../../btcec
 
-replace github.com/KonradStaniec/test-node/btcutil => ../
+replace github.com/babylonchain-io/bbld/btcutil => ../
 
-replace github.com/KonradStaniec/test-node => ../..
+replace github.com/babylonchain-io/bbld => ../..

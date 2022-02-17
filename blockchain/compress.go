@@ -5,8 +5,8 @@
 package blockchain
 
 import (
-	"github.com/KonradStaniec/test-node/btcec"
-	"github.com/KonradStaniec/test-node/txscript"
+	"github.com/babylonchain-io/bbld/btcec"
+	"github.com/babylonchain-io/bbld/txscript"
 )
 
 // -----------------------------------------------------------------------------

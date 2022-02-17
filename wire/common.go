@@ -12,7 +12,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 const (

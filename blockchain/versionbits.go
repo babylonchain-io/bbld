@@ -5,7 +5,7 @@
 package blockchain
 
 import (
-	"github.com/KonradStaniec/test-node/chaincfg"
+	"github.com/babylonchain-io/bbld/chaincfg"
 )
 
 const (

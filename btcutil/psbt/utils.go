@@ -12,8 +12,8 @@ import (
 	"io"
 	"sort"
 
-	"github.com/KonradStaniec/test-node/txscript"
-	"github.com/KonradStaniec/test-node/wire"
+	"github.com/babylonchain-io/bbld/txscript"
+	"github.com/babylonchain-io/bbld/wire"
 )
 
 // WriteTxWitness is a utility function due to non-exported witness

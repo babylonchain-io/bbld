@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/KonradStaniec/test-node/chaincfg/chainhash"
+	"github.com/babylonchain-io/bbld/chaincfg/chainhash"
 )
 
 // FilterType is used to represent a filter type.
