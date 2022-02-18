@@ -28,7 +28,7 @@ jobs:
           paths:
             - "/home/circleci/go/pkg/mod"
       - run:
-          name: Run tests
+          name: Run unit tests
           command: |
             make unit
       - run:
