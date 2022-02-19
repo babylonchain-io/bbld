@@ -19,9 +19,9 @@ ARG ARCH=amd64
 # https://github.com/opencontainers/image-spec/blob/main/descriptor.md#digests
 # https://cloud.google.com/architecture/using-container-images
 # https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md
-# ➜  ~ crane digest golang:1.16-alpine3.12
-# sha256:db2475a1dbb2149508e5db31d7d77a75e6600d54be645f37681f03f2762169ba
-FROM golang@sha256:db2475a1dbb2149508e5db31d7d77a75e6600d54be645f37681f03f2762169ba AS build-container
+# ➜  ~ crane digest golang:1.17.7-alpine3.15
+# sha256:d030a987c28ca403007a69af28ba419fca00fc15f08e7801fc8edee77c00b8ee
+FROM golang@sha256:d030a987c28ca403007a69af28ba419fca00fc15f08e7801fc8edee77c00b8ee AS build-container
 
 ARG ARCH
 ENV GO111MODULE=on
@@ -35,12 +35,12 @@ RUN set -ex \
   && echo "Compiling for $GOARCH" \
   && go install -v . ./cmd/...
 
-FROM $ARCH/alpine:3.12
+FROM $ARCH/alpine:3.15
 
 COPY --from=build-container /go/bin /bin
 
-VOLUME ["/root/.btcd"]
+VOLUME ["/root/.bbld"]
 
 EXPOSE 8333 8334
 
-ENTRYPOINT ["btcd"]
+ENTRYPOINT ["bbld"]
