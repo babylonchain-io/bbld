@@ -48,16 +48,6 @@ var (
 	// a package level variable to avoid the need to create a new instance
 	// every time a check is needed.
 	zeroHash chainhash.Hash
-
-	// block91842Hash is one of the two nodes which violate the rules
-	// set forth in BIP0030.  It is defined as a package level variable to
-	// avoid the need to create a new instance every time a check is needed.
-	block91842Hash = newHashFromStr("00000000000a4d0a398161ffc163c503763b1f4360639393e0e4c8e300e0caec")
-
-	// block91880Hash is one of the two nodes which violate the rules
-	// set forth in BIP0030.  It is defined as a package level variable to
-	// avoid the need to create a new instance every time a check is needed.
-	block91880Hash = newHashFromStr("00000000000743f190a18c5577a3c2d2a1f610ae9601ac046a38084ccb7cd721")
 )
 
 // isNullOutpoint determines whether or not a previous transaction output point
@@ -164,21 +154,6 @@ func IsFinalizedTransaction(tx *btcutil.Tx, blockHeight int32, blockTime time.Ti
 		}
 	}
 	return true
-}
-
-// isBIP0030Node returns whether or not the passed node represents one of the
-// two blocks that violate the BIP0030 rule which prevents transactions from
-// overwriting old ones.
-func isBIP0030Node(node *blockNode) bool {
-	if node.height == 91842 && node.hash.IsEqual(block91842Hash) {
-		return true
-	}
-
-	if node.height == 91880 && node.hash.IsEqual(block91880Hash) {
-		return true
-	}
-
-	return false
 }
 
 // CalcBlockSubsidy returns the subsidy amount a block at the provided height
@@ -818,48 +793,6 @@ func (b *BlockChain) checkBlockContext(block *btcutil.Block, prevNode *blockNode
 	return nil
 }
 
-// checkBIP0030 ensures blocks do not contain duplicate transactions which
-// 'overwrite' older transactions that are not fully spent.  This prevents an
-// attack where a coinbase and all of its dependent transactions could be
-// duplicated to effectively revert the overwritten transactions to a single
-// confirmation thereby making them vulnerable to a double spend.
-//
-// For more details, see
-// https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki and
-// http://r6.ca/blog/20120206T005236Z.html.
-//
-// This function MUST be called with the chain state lock held (for reads).
-func (b *BlockChain) checkBIP0030(node *blockNode, block *btcutil.Block, view *UtxoViewpoint) error {
-	// Fetch utxos for all of the transaction ouputs in this block.
-	// Typically, there will not be any utxos for any of the outputs.
-	fetchSet := make(map[wire.OutPoint]struct{})
-	for _, tx := range block.Transactions() {
-		prevOut := wire.OutPoint{Hash: *tx.Hash()}
-		for txOutIdx := range tx.MsgTx().TxOut {
-			prevOut.Index = uint32(txOutIdx)
-			fetchSet[prevOut] = struct{}{}
-		}
-	}
-	err := view.fetchUtxos(b.db, fetchSet)
-	if err != nil {
-		return err
-	}
-
-	// Duplicate transactions are only allowed if the previous transaction
-	// is fully spent.
-	for outpoint := range fetchSet {
-		utxo := view.LookupEntry(outpoint)
-		if utxo != nil && !utxo.IsSpent() {
-			str := fmt.Sprintf("tried to overwrite transaction %v "+
-				"at block height %d that is not fully spent",
-				outpoint.Hash, utxo.BlockHeight())
-			return ruleError(ErrOverwriteTx, str)
-		}
-	}
-
-	return nil
-}
-
 // CheckTransactionInputs performs a series of checks on the inputs to a
 // transaction to ensure they are valid.  An example of some of the checks
 // include verifying all inputs exist, ensuring the coinbase seasoning
@@ -1005,29 +938,6 @@ func (b *BlockChain) checkConnectBlock(node *blockNode, block *btcutil.Block, vi
 		return AssertError(fmt.Sprintf("inconsistent view when "+
 			"checking block connection: best hash is %v instead "+
 			"of expected %v", view.BestHash(), parentHash))
-	}
-
-	// BIP0030 added a rule to prevent blocks which contain duplicate
-	// transactions that 'overwrite' older transactions which are not fully
-	// spent.  See the documentation for checkBIP0030 for more details.
-	//
-	// There are two blocks in the chain which violate this rule, so the
-	// check must be skipped for those blocks.  The isBIP0030Node function
-	// is used to determine if this block is one of the two blocks that must
-	// be skipped.
-	//
-	// In addition, as of BIP0034, duplicate coinbases are no longer
-	// possible due to its requirement for including the block height in the
-	// coinbase and thus it is no longer possible to create transactions
-	// that 'overwrite' older ones.  Therefore, only enforce the rule if
-	// BIP0034 is not yet active.  This is a useful optimization because the
-	// BIP0030 check is expensive since it involves a ton of cache misses in
-	// the utxoset.
-	if !isBIP0030Node(node) && (node.height < b.chainParams.BIP0034Height) {
-		err := b.checkBIP0030(node, block, view)
-		if err != nil {
-			return err
-		}
 	}
 
 	// Load all of the utxos referenced by the inputs for all transactions

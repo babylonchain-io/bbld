@@ -1700,29 +1700,12 @@ func Generate(includeLargeReorg bool) (tests [][]TestInstance, err error) {
 	})
 	rejected(blockchain.ErrSpendTooHigh)
 
-	// ---------------------------------------------------------------------
-	// BIP0030 tests.
-	// ---------------------------------------------------------------------
-
 	// Create a good block to reset the chain to a stable base.
 	//
 	//   ... -> b57(16) -> b60(17)
 	g.setTip("b57")
 	g.nextBlock("b60", outs[17])
 	accepted()
-
-	// Create block that has a tx with the same hash as an existing tx that
-	// has not been fully spent.
-	//
-	//   ... -> b60(17)
-	//                 \-> b61(18)
-	g.nextBlock("b61", outs[18], func(b *wire.MsgBlock) {
-		// Duplicate the coinbase of the parent block to force the
-		// condition.
-		parent := g.blocks[b.Header.PrevBlock]
-		b.Transactions[0] = parent.Transactions[0]
-	})
-	rejected(blockchain.ErrOverwriteTx)
 
 	// ---------------------------------------------------------------------
 	// Blocks with non-final transaction tests.
