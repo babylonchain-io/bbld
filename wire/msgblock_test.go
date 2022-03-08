@@ -70,8 +70,8 @@ func TestBlock(t *testing.T) {
 // TestBlockTxHashes tests the ability to generate a slice of all transaction
 // hashes from a block accurately.
 func TestBlockTxHashes(t *testing.T) {
-	// Block 1, transaction 1 hash.
-	hashStr := "0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098"
+	// Block 1, transaction 1 hash. Modified for additional commitment byte
+	hashStr := "43fd8d83964b51e9147591dd52ee5467f102d78460caf6332912850b32449f25"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -581,9 +581,10 @@ var blockOneBytes = []byte{
 	0xee,                   // 65-byte uncompressed public key
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
+	0x00, // No commitment in transaction
 }
 
 // Transaction location information for block one transactions.
 var blockOneTxLocs = []TxLoc{
-	{TxStart: 81, TxLen: 134},
+	{TxStart: 81, TxLen: 135}, // Transaction len is 134 standard bytes + 1 byte for no commitment info
 }

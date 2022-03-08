@@ -107,6 +107,13 @@ const (
 	// for script validation, each pushed item onto the stack must be less
 	// than 10k bytes.
 	maxWitnessItemSize = 11000
+
+	// Size of commitment tag which is embbeded in the Commitment struct
+	// Tag bytes are not validated in any way
+	tagSize = 32
+
+	// Maximum size of Proof of stake chain signature
+	maxPosSigSize = 128
 )
 
 // TxFlagMarker is the first byte of the FLAG field in a bitcoin tx
@@ -304,6 +311,135 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 	}
 }
 
+// // packet_type (4 high bits)
+// // protocol version (4 low bits)
+// byte ver_type;
+// byte version() const { return ver_type & 0xf; }
+// byte type() const { return ver_type >> 4; }
+// void set_version(byte v) { ver_type = (ver_type & 0xf0) | (v & 0xf); }
+// void set_type(byte t) { ver_type = (ver_type & 0xf) | (t << 4); }
+
+type Commitmment struct {
+	Tag            [tagSize]uint8
+	verProt        uint8
+	DataSize       uint32
+	HashCommitment [chainhash.HashSize]uint8
+	Nonce          uint32
+	PosSig         []uint8
+}
+
+func (c *Commitmment) Version() uint8 {
+	return c.verProt & 0xf
+}
+
+func (c *Commitmment) ProtectionLevel() uint8 {
+	return c.verProt >> 4
+}
+
+func (c *Commitmment) ReadCommitment(r io.Reader, pver uint32) error {
+	_, err := io.ReadFull(r, c.Tag[:])
+
+	if err != nil {
+		return err
+	}
+
+	vp, err := binarySerializer.Uint8(r)
+
+	if err != nil {
+		return err
+	}
+
+	c.verProt = vp
+
+	dataSize, err := binarySerializer.Uint32(r, littleEndian)
+
+	if err != nil {
+		return err
+	}
+
+	c.DataSize = dataSize
+
+	_, err = io.ReadFull(r, c.HashCommitment[:])
+
+	if err != nil {
+		return err
+	}
+
+	nonce, err := binarySerializer.Uint32(r, littleEndian)
+
+	if err != nil {
+		return err
+	}
+
+	c.Nonce = nonce
+
+	c.PosSig, err = ReadVarBytes(r, pver, maxPosSigSize, "PosSig")
+
+	return err
+}
+
+func (c *Commitmment) WriteCommitment(w io.Writer, pver uint32) error {
+	_, err := w.Write(c.Tag[:])
+
+	if err != nil {
+		return err
+	}
+
+	err = binarySerializer.PutUint8(w, c.verProt)
+
+	if err != nil {
+		return err
+	}
+
+	err = binarySerializer.PutUint32(w, littleEndian, c.DataSize)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(c.HashCommitment[:])
+
+	if err != nil {
+		return err
+	}
+
+	err = binarySerializer.PutUint32(w, littleEndian, c.Nonce)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteVarBytes(w, pver, c.PosSig)
+}
+
+func (c *Commitmment) SerializeSize() int {
+	// 32 + 1 + 4 + 32 + 4 + variable list discriminator for PosSig + actual lenght of PosSig
+	return 73 + VarIntSerializeSize(uint64(len(c.PosSig))) + len(c.PosSig)
+}
+
+func NewTxCommitment(
+	tag [tagSize]uint8,
+	version uint8,
+	protectionLevel uint8,
+	dataSize uint32,
+	hashCommitment [chainhash.HashSize]uint8,
+	nonce uint32,
+	signature []uint8) *Commitmment {
+
+	var verProt uint8
+	verProt = (verProt & 0xf0) | (version & 0xf)
+	verProt = (verProt & 0xf) | (protectionLevel << 4)
+
+	return &Commitmment{
+		Tag:            tag,
+		verProt:        verProt,
+		DataSize:       dataSize,
+		HashCommitment: hashCommitment,
+		Nonce:          nonce,
+		PosSig:         signature,
+	}
+}
+
 // MsgTx implements the Message interface and represents a bitcoin tx message.
 // It is used to deliver transaction information in response to a getdata
 // message (MsgGetData) for a given transaction.
@@ -311,10 +447,11 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 // Use the AddTxIn and AddTxOut functions to build up the list of transaction
 // inputs and outputs.
 type MsgTx struct {
-	Version  int32
-	TxIn     []*TxIn
-	TxOut    []*TxOut
-	LockTime uint32
+	Version       int32
+	TxIn          []*TxIn
+	TxOut         []*TxOut
+	LockTime      uint32
+	PosCommitment *Commitmment
 }
 
 // AddTxIn adds a transaction input to the message.
@@ -603,6 +740,27 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 		return err
 	}
 
+	hasCommitment, err := ReadBool(r)
+
+	if err != nil {
+		return err
+	}
+
+	if hasCommitment {
+		var c Commitmment
+
+		err = c.ReadCommitment(r, pver)
+
+		if err != nil {
+			returnScriptBuffers()
+			return err
+		}
+
+		msg.PosCommitment = &c
+	} else {
+		msg.PosCommitment = nil
+	}
+
 	// Create a single allocation to house all of the scripts and set each
 	// input signature script and output public key script to the
 	// appropriate subslice of the overall contiguous buffer.  Then, return
@@ -762,7 +920,31 @@ func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) error
 		}
 	}
 
-	return binarySerializer.PutUint32(w, littleEndian, msg.LockTime)
+	err = binarySerializer.PutUint32(w, littleEndian, msg.LockTime)
+
+	if err != nil {
+		return err
+	}
+
+	// we encode optional value as 1 byte, for boolean value representing if value
+	// exists followed by bytes values if byte is > 0
+	if msg.PosCommitment == nil {
+		err = WriteBool(w, false)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	} else {
+		err = WriteBool(w, true)
+
+		if err != nil {
+			return err
+		}
+
+		return msg.PosCommitment.WriteCommitment(w, pver)
+	}
 }
 
 // HasWitness returns false if none of the inputs within the transaction
@@ -820,6 +1002,13 @@ func (msg *MsgTx) baseSize() int {
 
 	for _, txOut := range msg.TxOut {
 		n += txOut.SerializeSize()
+	}
+
+	// 1 bytes representing if commitment exists
+	n += 1
+
+	if msg.PosCommitment != nil {
+		n += msg.PosCommitment.SerializeSize()
 	}
 
 	return n

@@ -23,7 +23,7 @@ func TestMerkleBlock3(t *testing.T) {
 		"0000ffffffff08044c86041b020a02ffffffff0100f2052a01000000434" +
 		"104ecd3229b0571c3be876feaac0442a9f13c5a572742927af1dc623353" +
 		"ecf8c202225f64868137a18cdd85cbbb4c74fbccfd4f49639cf1bdc94a5" +
-		"672bb15ad5d4cac00000000"
+		"672bb15ad5d4cac0000000000"
 	blockBytes, err := hex.DecodeString(blockStr)
 	if err != nil {
 		t.Errorf("TestMerkleBlock3 DecodeString failed: %v", err)
@@ -48,11 +48,11 @@ func TestMerkleBlock3(t *testing.T) {
 
 	mBlock, _ := bloom.NewMerkleBlock(blk, f)
 
-	wantStr := "0100000079cda856b143d9db2c1caff01d1aecc8630d30625d10e8b4" +
-		"b8b0000000000000b50cc069d6a3e33e3ff84a5c41d9d3febe7c770fdcc" +
-		"96b2c3ff60abe184f196367291b4d4c86041b8fa45d630100000001b50c" +
-		"c069d6a3e33e3ff84a5c41d9d3febe7c770fdcc96b2c3ff60abe184f196" +
-		"30101"
+	wantStr := "0100000079cda856b143d9db2c1caff01d1aecc8630d30625d10e8b4b8b000" +
+		"0000000000b50cc069d6a3e33e3ff84a5c41d9d3febe7c770fdcc96b2c3ff60abe184f196367" +
+		"291b4d4c86041b8fa45d6301000000013740f926ba64d21514ab1c97446baec9a454ce828c02c" +
+		"391f1e6510553d807e80100"
+
 	want, err := hex.DecodeString(wantStr)
 	if err != nil {
 		t.Errorf("TestMerkleBlock3 DecodeString failed: %v", err)

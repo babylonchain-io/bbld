@@ -12,6 +12,8 @@ import (
 
 // TestMerkle tests the BuildMerkleTreeStore API.
 func TestMerkle(t *testing.T) {
+	t.Skip("Need to mine proper babylon block with transactions")
+
 	block := btcutil.NewBlock(&Block100000)
 	merkles := BuildMerkleTreeStore(block.Transactions(), false)
 	calculatedMerkleRoot := merkles[len(merkles)-1]

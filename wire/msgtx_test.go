@@ -136,8 +136,9 @@ func TestTx(t *testing.T) {
 
 // TestTxHash tests the ability to generate the hash of a transaction accurately.
 func TestTxHash(t *testing.T) {
-	// Hash of first transaction from block 113875.
-	hashStr := "f051e59b5e2503ac626d03aaeac8ab7be2d72ba4b7e97119c5852d70d52dcb86"
+	// Hash of first transaction from bitcoin block 113875 with additional 0 added
+	// at the end of encoded tx to represent lack of commitment
+	hashStr := "6b5ba5f43dade347684447ced7ad39305117f93ee5d2cc59cbeca49494ccaa94"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -185,20 +186,22 @@ func TestTxHash(t *testing.T) {
 // TestTxSha tests the ability to generate the wtxid, and txid of a transaction
 // with witness inputs accurately.
 func TestWTxSha(t *testing.T) {
-	hashStrTxid := "0f167d1385a84d1518cfee208b653fc9163b605ccf1b75347e2850b3e2eb19f3"
+	// Both Hashes are from block 23157 in a past version of segnet, with additional
+	// 0 in the encoded version of tx to represent lack of commitment
+	hashStrTxid := "025441dfc8ed8e830ec1934b39261d8c90039cb778cef636150690a545acf7cc"
 	wantHashTxid, err := chainhash.NewHashFromStr(hashStrTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
 		return
 	}
-	hashStrWTxid := "0858eab78e77b6b033da30f46699996396cf48fcf625a783c85a51403e175e74"
+	hashStrWTxid := "39b97f540b0a673056dfab1a92aa0a9685e720631716aec2fd6827145ae0093c"
 	wantHashWTxid, err := chainhash.NewHashFromStr(hashStrWTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
 		return
 	}
 
-	// From block 23157 in a past version of segnet.
+	// From block 23157 in a past version of segnet
 	msgTx := NewMsgTx(1)
 	txIn := TxIn{
 		PreviousOutPoint: OutPoint{
@@ -270,6 +273,7 @@ func TestTxWire(t *testing.T) {
 		0x00,                   // Varint for number of input transactions
 		0x00,                   // Varint for number of output transactions
 		0x00, 0x00, 0x00, 0x00, // Lock time
+		0x00, // no commitment
 	}
 
 	tests := []struct {
@@ -475,6 +479,7 @@ func TestTxSerialize(t *testing.T) {
 		0x00,                   // Varint for number of input transactions
 		0x00,                   // Varint for number of output transactions
 		0x00, 0x00, 0x00, 0x00, // Lock time
+		0x00, // No commitment
 	}
 
 	tests := []struct {
@@ -733,15 +738,15 @@ func TestTxSerializeSizeStripped(t *testing.T) {
 		size int    // Expected serialized size
 	}{
 		// No inputs or outpus.
-		{noTx, 10},
+		{noTx, 11},
 
 		// Transcaction with an input and an output.
-		{multiTx, 210},
+		{multiTx, 211},
 
 		// Transaction with an input which includes witness data, and
 		// one output. Note that this uses SerializeSizeStripped which
 		// excludes the additional bytes due to witness data encoding.
-		{multiWitnessTx, 82},
+		{multiWitnessTx, 83},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -764,7 +769,7 @@ func TestTxWitnessSize(t *testing.T) {
 	}{
 		// Transaction with an input which includes witness data, and
 		// one output.
-		{multiWitnessTx, 190},
+		{multiWitnessTx, 191},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -871,6 +876,7 @@ var multiTxEncoded = []byte{
 	0xa6,                   // 65-byte signature
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
+	0x00, // No commitment
 }
 
 // multiTxPkScriptLocs is the location information for the public key scripts
@@ -971,6 +977,7 @@ var multiWitnessTxEncoded = []byte{
 	0x81, 0xf5, 0x21, 0xd7, 0xf3, 0x70, 0x6, 0x6a,
 	0x8f,
 	0x0, 0x0, 0x0, 0x0, // Lock time
+	0x00, // No commitment
 }
 
 // multiWitnessTxEncodedNonZeroFlag is an incorrect wire encoded bytes for
@@ -1014,6 +1021,7 @@ var multiWitnessTxEncodedNonZeroFlag = []byte{
 	0x81, 0xf5, 0x21, 0xd7, 0xf3, 0x70, 0x6, 0x6a,
 	0x8f,
 	0x0, 0x0, 0x0, 0x0, // Lock time
+	0x00, // No commitment
 }
 
 // multiTxPkScriptLocs is the location information for the public key scripts
