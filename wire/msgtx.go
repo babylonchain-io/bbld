@@ -307,14 +307,6 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 	}
 }
 
-// // packet_type (4 high bits)
-// // protocol version (4 low bits)
-// byte ver_type;
-// byte version() const { return ver_type & 0xf; }
-// byte type() const { return ver_type >> 4; }
-// void set_version(byte v) { ver_type = (ver_type & 0xf0) | (v & 0xf); }
-// void set_type(byte t) { ver_type = (ver_type & 0xf) | (t << 4); }
-
 type Commitmment struct {
 	Tag            [chainhash.HashSize]uint8
 	verProt        uint8
