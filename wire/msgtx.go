@@ -108,10 +108,6 @@ const (
 	// than 10k bytes.
 	maxWitnessItemSize = 11000
 
-	// Size of commitment tag which is embbeded in the Commitment struct
-	// Tag bytes are not validated in any way
-	tagSize = 32
-
 	// Maximum size of Proof of stake chain signature
 	maxPosSigSize = 128
 )
@@ -320,7 +316,7 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 // void set_type(byte t) { ver_type = (ver_type & 0xf) | (t << 4); }
 
 type Commitmment struct {
-	Tag            [tagSize]uint8
+	Tag            [chainhash.HashSize]uint8
 	verProt        uint8
 	DataSize       uint32
 	HashCommitment [chainhash.HashSize]uint8
@@ -418,7 +414,7 @@ func (c *Commitmment) SerializeSize() int {
 }
 
 func NewTxCommitment(
-	tag [tagSize]uint8,
+	tag [chainhash.HashSize]uint8,
 	version uint8,
 	protectionLevel uint8,
 	dataSize uint32,

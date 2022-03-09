@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"math/rand"
 	"reflect"
 	"testing"
 
@@ -781,6 +782,175 @@ func TestTxWitnessSize(t *testing.T) {
 			continue
 		}
 	}
+}
+
+func TestCommitmentSerialization(t *testing.T) {
+	tests := []struct {
+		in   *Commitmment
+		size int
+	}{
+		{generaterateRandomCommitment(0, 0, 0, 0, 0), 74},
+		{generaterateRandomCommitment(1, 2, 10000, 10000, 64), 138},
+		{generaterateRandomCommitment(11, 15, 100000, 100000, 100), 174},
+		{generaterateRandomCommitment(11, 15, 1000000, 1000000, 128), 202},
+	}
+
+	for i, test := range tests {
+		var buf bytes.Buffer
+		err := test.in.WriteCommitment(&buf, 0)
+		if err != nil {
+			t.Errorf("WriteCommitment #%d error %v", i, err)
+			continue
+		}
+
+		serializedSize := test.in.SerializeSize()
+		if serializedSize != test.size {
+			t.Errorf("MsgTx.SerializeSize: #%d got: %d, want: %d", i,
+				serializedSize, test.size)
+			continue
+		}
+
+		if serializedSize != buf.Len() {
+			t.Errorf("MsgTx.SerializeSize different than buffer len: #%d got: %d, want: %d", i,
+				serializedSize, buf.Len())
+			continue
+		}
+
+		// Decode the message from wire format.
+		var c Commitmment
+		rbuf := bytes.NewReader(buf.Bytes())
+		err = c.ReadCommitment(rbuf, 0)
+		if err != nil {
+			t.Errorf("ReadCommitment #%d error %v", i, err)
+			continue
+		}
+
+		if !reflect.DeepEqual(&c, test.in) {
+			t.Errorf("ReadCommitment #%d\n got: %s want: %s", i,
+				spew.Sdump(&c), spew.Sdump(test.in))
+			continue
+		}
+	}
+}
+
+func TestTxCommitmentVersionProtecionBitManipliation(t *testing.T) {
+	tests := []struct {
+		version         uint8
+		protectionLevel uint8
+	}{
+		{0, 0},
+		{1, 1},
+		{2, 3},
+		{4, 5},
+		{5, 4},
+		{10, 10},
+		{11, 12},
+		{12, 12},
+	}
+
+	for i, test := range tests {
+		var c = generaterateRandomCommitment(test.version, test.protectionLevel, 0, 0, 0)
+
+		if c.Version() != test.version {
+			t.Errorf("Bad commitment version: #%d got: %d, want: %d", i,
+				c.Version(), test.version)
+			continue
+		}
+
+		if c.ProtectionLevel() != test.protectionLevel {
+			t.Errorf("Bad commitment protection Level: #%d got: %d, want: %d", i,
+				c.ProtectionLevel(), test.protectionLevel)
+			continue
+		}
+	}
+}
+
+func TestTxWithCommitmentSerialization(t *testing.T) {
+	// Empty tx message.
+	noTx := NewMsgTx(1)
+	noTx.Version = 1
+	// noTxEncoded := []byte{
+	// 	0x01, 0x00, 0x00, 0x00, // Version
+	// 	0x00,                   // Varint for number of input transactions
+	// 	0x00,                   // Varint for number of output transactions
+	// 	0x00, 0x00, 0x00, 0x00, // Lock time
+	// 	0x00, // no commitment
+	// }
+
+	comm1 := generaterateRandomCommitment(1, 1, 32, 23, 64)
+	comm2 := generaterateRandomCommitment(1, 1, 1000, 1000, 78)
+
+	noTx.PosCommitment = comm1
+
+	var tx1 = *multiTx
+	tx1.PosCommitment = comm2
+
+	tests := []struct {
+		in   *MsgTx
+		size int
+	}{
+		// 11 + 138
+		{noTx, 149},
+		// 211 + 152
+		{&tx1, 363},
+	}
+
+	for i, test := range tests {
+		if test.in.SerializeSize() != test.size {
+			t.Errorf("Bad Tx size %d got #%d want %d", i, test.in.SerializeSize(), test.size)
+			continue
+		}
+
+		var buf bytes.Buffer
+		err := test.in.BtcEncode(&buf, 0, BaseEncoding)
+		if err != nil {
+			t.Errorf("BtcEncode tx with commitment #%d error %v", i, err)
+			continue
+		}
+
+		var msgTx MsgTx
+		rbuf := bytes.NewReader(buf.Bytes())
+		err = msgTx.BtcDecode(rbuf, 0, BaseEncoding)
+
+		if err != nil {
+			t.Errorf("BtcDecode tx with commitment #%d error %v", i, err)
+			continue
+		}
+
+		if !reflect.DeepEqual(&msgTx, test.in) {
+			t.Errorf("Tx Different #%d\n got: %s want: %s", i,
+				spew.Sdump(&msgTx), spew.Sdump(test.in))
+			continue
+		}
+	}
+}
+
+// generates commitment with all bytearray fields filled with random data
+func generaterateRandomCommitment(
+	version uint8,
+	protectionLevel uint8,
+	dataSize uint32,
+	nonce uint32,
+	sigLength uint32) *Commitmment {
+
+	var tag [chainhash.HashSize]byte
+	rand.Read(tag[:])
+
+	var hash [chainhash.HashSize]byte
+	rand.Read(hash[:])
+
+	var sig = make([]byte, sigLength)
+	rand.Read(sig)
+
+	return NewTxCommitment(
+		tag,
+		version,
+		protectionLevel,
+		dataSize,
+		hash,
+		nonce,
+		sig,
+	)
 }
 
 // multiTx is a MsgTx with an input and output and used in various tests.
