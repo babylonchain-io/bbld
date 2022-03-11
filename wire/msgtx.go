@@ -728,6 +728,11 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 		return err
 	}
 
+	// we encode optional value as 1 byte, for boolean value representing if value
+	// exists followed by bytes values if byte is > 0
+	// This is analogic to standard encoding of bitcoin lists i.e
+	// number of elements in lists || elem1 || elem2 || ..
+	// but here list can have length either 0 or 1
 	hasCommitment, err := ReadBool(r)
 
 	if err != nil {
@@ -916,6 +921,9 @@ func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) error
 
 	// we encode optional value as 1 byte, for boolean value representing if value
 	// exists followed by bytes values if byte is > 0
+	// This is analogic to standard encoding of bitcoin lists i.e
+	// number of elements in lists || elem1 || elem2 || ..
+	// but here list can have length either 0 or 1
 	if msg.PosCommitment == nil {
 		err = WriteBool(w, false)
 
