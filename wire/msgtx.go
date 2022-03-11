@@ -307,8 +307,11 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 	}
 }
 
+// Maximal size of tag stored in commitment
+const TagSize = 32
+
 type Commitmment struct {
-	Tag            [chainhash.HashSize]uint8
+	Tag            [TagSize]uint8
 	verProt        uint8
 	DataSize       uint32
 	HashCommitment [chainhash.HashSize]uint8
@@ -406,7 +409,7 @@ func (c *Commitmment) SerializeSize() int {
 }
 
 func NewTxCommitment(
-	tag [chainhash.HashSize]uint8,
+	tag [TagSize]uint8,
 	version uint8,
 	protectionLevel uint8,
 	dataSize uint32,
