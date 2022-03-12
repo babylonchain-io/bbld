@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"math/rand"
 	"reflect"
 	"testing"
 
@@ -136,8 +137,9 @@ func TestTx(t *testing.T) {
 
 // TestTxHash tests the ability to generate the hash of a transaction accurately.
 func TestTxHash(t *testing.T) {
-	// Hash of first transaction from block 113875.
-	hashStr := "f051e59b5e2503ac626d03aaeac8ab7be2d72ba4b7e97119c5852d70d52dcb86"
+	// Hash of first transaction from bitcoin block 113875 with additional 0 added
+	// at the end of encoded tx to represent lack of commitment
+	hashStr := "6b5ba5f43dade347684447ced7ad39305117f93ee5d2cc59cbeca49494ccaa94"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -185,20 +187,22 @@ func TestTxHash(t *testing.T) {
 // TestTxSha tests the ability to generate the wtxid, and txid of a transaction
 // with witness inputs accurately.
 func TestWTxSha(t *testing.T) {
-	hashStrTxid := "0f167d1385a84d1518cfee208b653fc9163b605ccf1b75347e2850b3e2eb19f3"
+	// Both Hashes are from block 23157 in a past version of segnet, with additional
+	// 0 in the encoded version of tx to represent lack of commitment
+	hashStrTxid := "025441dfc8ed8e830ec1934b39261d8c90039cb778cef636150690a545acf7cc"
 	wantHashTxid, err := chainhash.NewHashFromStr(hashStrTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
 		return
 	}
-	hashStrWTxid := "0858eab78e77b6b033da30f46699996396cf48fcf625a783c85a51403e175e74"
+	hashStrWTxid := "39b97f540b0a673056dfab1a92aa0a9685e720631716aec2fd6827145ae0093c"
 	wantHashWTxid, err := chainhash.NewHashFromStr(hashStrWTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
 		return
 	}
 
-	// From block 23157 in a past version of segnet.
+	// From block 23157 in a past version of segnet
 	msgTx := NewMsgTx(1)
 	txIn := TxIn{
 		PreviousOutPoint: OutPoint{
@@ -270,6 +274,7 @@ func TestTxWire(t *testing.T) {
 		0x00,                   // Varint for number of input transactions
 		0x00,                   // Varint for number of output transactions
 		0x00, 0x00, 0x00, 0x00, // Lock time
+		0x00, // no commitment
 	}
 
 	tests := []struct {
@@ -475,6 +480,7 @@ func TestTxSerialize(t *testing.T) {
 		0x00,                   // Varint for number of input transactions
 		0x00,                   // Varint for number of output transactions
 		0x00, 0x00, 0x00, 0x00, // Lock time
+		0x00, // No commitment
 	}
 
 	tests := []struct {
@@ -733,15 +739,15 @@ func TestTxSerializeSizeStripped(t *testing.T) {
 		size int    // Expected serialized size
 	}{
 		// No inputs or outpus.
-		{noTx, 10},
+		{noTx, 11},
 
 		// Transcaction with an input and an output.
-		{multiTx, 210},
+		{multiTx, 211},
 
 		// Transaction with an input which includes witness data, and
 		// one output. Note that this uses SerializeSizeStripped which
 		// excludes the additional bytes due to witness data encoding.
-		{multiWitnessTx, 82},
+		{multiWitnessTx, 83},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -764,7 +770,7 @@ func TestTxWitnessSize(t *testing.T) {
 	}{
 		// Transaction with an input which includes witness data, and
 		// one output.
-		{multiWitnessTx, 190},
+		{multiWitnessTx, 191},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -776,6 +782,175 @@ func TestTxWitnessSize(t *testing.T) {
 			continue
 		}
 	}
+}
+
+func TestCommitmentSerialization(t *testing.T) {
+	tests := []struct {
+		in   *Commitmment
+		size int
+	}{
+		{generaterateRandomCommitment(0, 0, 0, 0, 0), 74},
+		{generaterateRandomCommitment(1, 2, 10000, 10000, 64), 138},
+		{generaterateRandomCommitment(11, 15, 100000, 100000, 100), 174},
+		{generaterateRandomCommitment(11, 15, 1000000, 1000000, 128), 202},
+	}
+
+	for i, test := range tests {
+		var buf bytes.Buffer
+		err := test.in.WriteCommitment(&buf, 0)
+		if err != nil {
+			t.Errorf("WriteCommitment #%d error %v", i, err)
+			continue
+		}
+
+		serializedSize := test.in.SerializeSize()
+		if serializedSize != test.size {
+			t.Errorf("MsgTx.SerializeSize: #%d got: %d, want: %d", i,
+				serializedSize, test.size)
+			continue
+		}
+
+		if serializedSize != buf.Len() {
+			t.Errorf("MsgTx.SerializeSize different than buffer len: #%d got: %d, want: %d", i,
+				serializedSize, buf.Len())
+			continue
+		}
+
+		// Decode the message from wire format.
+		var c Commitmment
+		rbuf := bytes.NewReader(buf.Bytes())
+		err = c.ReadCommitment(rbuf, 0)
+		if err != nil {
+			t.Errorf("ReadCommitment #%d error %v", i, err)
+			continue
+		}
+
+		if !reflect.DeepEqual(&c, test.in) {
+			t.Errorf("ReadCommitment #%d\n got: %s want: %s", i,
+				spew.Sdump(&c), spew.Sdump(test.in))
+			continue
+		}
+	}
+}
+
+func TestTxCommitmentVersionProtecionBitManipliation(t *testing.T) {
+	tests := []struct {
+		version         uint8
+		protectionLevel uint8
+	}{
+		{0, 0},
+		{1, 1},
+		{2, 3},
+		{4, 5},
+		{5, 4},
+		{10, 10},
+		{11, 12},
+		{12, 12},
+	}
+
+	for i, test := range tests {
+		var c = generaterateRandomCommitment(test.version, test.protectionLevel, 0, 0, 0)
+
+		if c.Version() != test.version {
+			t.Errorf("Bad commitment version: #%d got: %d, want: %d", i,
+				c.Version(), test.version)
+			continue
+		}
+
+		if c.ProtectionLevel() != test.protectionLevel {
+			t.Errorf("Bad commitment protection Level: #%d got: %d, want: %d", i,
+				c.ProtectionLevel(), test.protectionLevel)
+			continue
+		}
+	}
+}
+
+func TestTxWithCommitmentSerialization(t *testing.T) {
+	// Empty tx message.
+	noTx := NewMsgTx(1)
+	noTx.Version = 1
+	// noTxEncoded := []byte{
+	// 	0x01, 0x00, 0x00, 0x00, // Version
+	// 	0x00,                   // Varint for number of input transactions
+	// 	0x00,                   // Varint for number of output transactions
+	// 	0x00, 0x00, 0x00, 0x00, // Lock time
+	// 	0x00, // no commitment
+	// }
+
+	comm1 := generaterateRandomCommitment(1, 1, 32, 23, 64)
+	comm2 := generaterateRandomCommitment(1, 1, 1000, 1000, 78)
+
+	noTx.PosCommitment = comm1
+
+	var tx1 = *multiTx
+	tx1.PosCommitment = comm2
+
+	tests := []struct {
+		in   *MsgTx
+		size int
+	}{
+		// 11 + 138
+		{noTx, 149},
+		// 211 + 152
+		{&tx1, 363},
+	}
+
+	for i, test := range tests {
+		if test.in.SerializeSize() != test.size {
+			t.Errorf("Bad Tx size %d got #%d want %d", i, test.in.SerializeSize(), test.size)
+			continue
+		}
+
+		var buf bytes.Buffer
+		err := test.in.BtcEncode(&buf, 0, BaseEncoding)
+		if err != nil {
+			t.Errorf("BtcEncode tx with commitment #%d error %v", i, err)
+			continue
+		}
+
+		var msgTx MsgTx
+		rbuf := bytes.NewReader(buf.Bytes())
+		err = msgTx.BtcDecode(rbuf, 0, BaseEncoding)
+
+		if err != nil {
+			t.Errorf("BtcDecode tx with commitment #%d error %v", i, err)
+			continue
+		}
+
+		if !reflect.DeepEqual(&msgTx, test.in) {
+			t.Errorf("Tx Different #%d\n got: %s want: %s", i,
+				spew.Sdump(&msgTx), spew.Sdump(test.in))
+			continue
+		}
+	}
+}
+
+// generates commitment with all bytearray fields filled with random data
+func generaterateRandomCommitment(
+	version uint8,
+	protectionLevel uint8,
+	dataSize uint32,
+	nonce uint32,
+	sigLength uint32) *Commitmment {
+
+	var tag [chainhash.HashSize]byte
+	rand.Read(tag[:])
+
+	var hash [chainhash.HashSize]byte
+	rand.Read(hash[:])
+
+	var sig = make([]byte, sigLength)
+	rand.Read(sig)
+
+	return NewTxCommitment(
+		tag,
+		version,
+		protectionLevel,
+		dataSize,
+		hash,
+		nonce,
+		sig,
+	)
 }
 
 // multiTx is a MsgTx with an input and output and used in various tests.
@@ -871,6 +1046,7 @@ var multiTxEncoded = []byte{
 	0xa6,                   // 65-byte signature
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
+	0x00, // No commitment
 }
 
 // multiTxPkScriptLocs is the location information for the public key scripts
@@ -971,6 +1147,7 @@ var multiWitnessTxEncoded = []byte{
 	0x81, 0xf5, 0x21, 0xd7, 0xf3, 0x70, 0x6, 0x6a,
 	0x8f,
 	0x0, 0x0, 0x0, 0x0, // Lock time
+	0x00, // No commitment
 }
 
 // multiWitnessTxEncodedNonZeroFlag is an incorrect wire encoded bytes for
@@ -1014,6 +1191,7 @@ var multiWitnessTxEncodedNonZeroFlag = []byte{
 	0x81, 0xf5, 0x21, 0xd7, 0xf3, 0x70, 0x6, 0x6a,
 	0x8f,
 	0x0, 0x0, 0x0, 0x0, // Lock time
+	0x00, // No commitment
 }
 
 // multiTxPkScriptLocs is the location information for the public key scripts

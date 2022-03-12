@@ -104,7 +104,7 @@ func loadBlocks(filename string) (blocks []*btcutil.Block, err error) {
 
 		// read block
 		dr.Read(rbytes)
-
+		fmt.Println("Before new block from bytes")
 		block, err = btcutil.NewBlockFromBytes(rbytes)
 		if err != nil {
 			return

@@ -672,6 +672,32 @@ func WriteVarBytes(w io.Writer, pver uint32, bytes []byte) error {
 	return err
 }
 
+func ReadBool(r io.Reader) (bool, error) {
+	rv, err := binarySerializer.Uint8(r)
+	if err != nil {
+		return false, err
+	}
+	if rv == 0x00 {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}
+
+func WriteBool(w io.Writer, v bool) error {
+	var err error
+	if v {
+		err = binarySerializer.PutUint8(w, 0x01)
+	} else {
+		err = binarySerializer.PutUint8(w, 0x00)
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // randomUint64 returns a cryptographically random uint64 value.  This
 // unexported version takes a reader primarily to ensure the error paths
 // can be properly tested by passing a fake reader in the tests.
