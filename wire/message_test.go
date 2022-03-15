@@ -76,6 +76,7 @@ func TestMessage(t *testing.T) {
 		[]byte("payload"))
 	msgCFHeaders := NewMsgCFHeaders()
 	msgCFCheckpt := NewMsgCFCheckpt(GCSFilterRegular, &chainhash.Hash{}, 0)
+	msgTxData := NewMsgTxData(msgTx, []byte{1, 2})
 
 	tests := []struct {
 		in     Message    // Value to encode
@@ -111,6 +112,7 @@ func TestMessage(t *testing.T) {
 		{msgCFilter, msgCFilter, pver, MainNet, 65},
 		{msgCFHeaders, msgCFHeaders, pver, MainNet, 90},
 		{msgCFCheckpt, msgCFCheckpt, pver, MainNet, 58},
+		{msgTxData, msgTxData, pver, MainNet, 38},
 	}
 
 	t.Logf("Running %d tests", len(tests))

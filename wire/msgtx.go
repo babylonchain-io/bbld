@@ -107,9 +107,6 @@ const (
 	// for script validation, each pushed item onto the stack must be less
 	// than 10k bytes.
 	maxWitnessItemSize = 11000
-
-	// Maximum size of Proof of stake chain signature
-	maxPosSigSize = 128
 )
 
 // TxFlagMarker is the first byte of the FLAG field in a bitcoin tx
@@ -306,9 +303,6 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 		PkScript: pkScript,
 	}
 }
-
-// Maximal size of tag stored in commitment
-const TagSize = 32
 
 type Commitmment struct {
 	Tag            [TagSize]uint8
