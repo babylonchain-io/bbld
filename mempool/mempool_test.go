@@ -5,7 +5,9 @@
 package mempool
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
+	"math/rand"
 	"reflect"
 	"strings"
 	"sync"
@@ -406,7 +408,7 @@ func (ctx *testContext) addSignedTx(inputs []spendableOutput,
 		ctx.harness.chain.SetMedianTimePast(time.Now())
 	} else {
 		acceptedTxns, err := ctx.harness.txPool.ProcessTransaction(
-			tx, true, false, 0,
+			tx, []byte{}, true, false, 0,
 		)
 		if err != nil {
 			ctx.t.Fatalf("unable to process transaction: %v", err)
@@ -475,7 +477,7 @@ func TestSimpleOrphanChain(t *testing.T) {
 	// Ensure the orphans are accepted (only up to the maximum allowed so
 	// none are evicted).
 	for _, tx := range chainedTxns[1 : maxOrphans+1] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, true,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -498,7 +500,7 @@ func TestSimpleOrphanChain(t *testing.T) {
 	// all get accepted.  Notice the accept orphans flag is also false here
 	// to ensure it has no bearing on whether or not already existing
 	// orphans in the pool are linked.
-	acceptedTxns, err := harness.txPool.ProcessTransaction(chainedTxns[0],
+	acceptedTxns, err := harness.txPool.ProcessTransaction(chainedTxns[0], []byte{},
 		false, false, 0)
 	if err != nil {
 		t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -537,7 +539,7 @@ func TestOrphanReject(t *testing.T) {
 
 	// Ensure orphans are rejected when the allow orphans flag is not set.
 	for _, tx := range chainedTxns[1:] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, false,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, false,
 			false, 0)
 		if err == nil {
 			t.Fatalf("ProcessTransaction: did not fail on orphan "+
@@ -594,7 +596,7 @@ func TestOrphanEviction(t *testing.T) {
 	// Add enough orphans to exceed the max allowed while ensuring they are
 	// all accepted.  This will cause an eviction.
 	for _, tx := range chainedTxns[1:] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, true,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -658,7 +660,7 @@ func TestBasicOrphanRemoval(t *testing.T) {
 	// Ensure the orphans are accepted (only up to the maximum allowed so
 	// none are evicted).
 	for _, tx := range chainedTxns[1 : maxOrphans+1] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, true,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -733,7 +735,7 @@ func TestOrphanChainRemoval(t *testing.T) {
 	// Ensure the orphans are accepted (only up to the maximum allowed so
 	// none are evicted).
 	for _, tx := range chainedTxns[1 : maxOrphans+1] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, true,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -796,7 +798,7 @@ func TestMultiInputOrphanDoubleSpend(t *testing.T) {
 	// Start by adding the orphan transactions from the generated chain
 	// except the final one.
 	for _, tx := range chainedTxns[1:maxOrphans] {
-		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, true,
+		acceptedTxns, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept valid "+
@@ -822,7 +824,7 @@ func TestMultiInputOrphanDoubleSpend(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to create signed tx: %v", err)
 	}
-	acceptedTxns, err := harness.txPool.ProcessTransaction(doubleSpendTx,
+	acceptedTxns, err := harness.txPool.ProcessTransaction(doubleSpendTx, []byte{},
 		true, false, 0)
 	if err != nil {
 		t.Fatalf("ProcessTransaction: failed to accept valid orphan %v",
@@ -841,7 +843,7 @@ func TestMultiInputOrphanDoubleSpend(t *testing.T) {
 	//
 	// This will cause the shared output to become a concrete spend which
 	// will in turn must cause the double spending orphan to be removed.
-	acceptedTxns, err = harness.txPool.ProcessTransaction(chainedTxns[0],
+	acceptedTxns, err = harness.txPool.ProcessTransaction(chainedTxns[0], []byte{},
 		false, false, 0)
 	if err != nil {
 		t.Fatalf("ProcessTransaction: failed to accept valid tx %v", err)
@@ -889,7 +891,7 @@ func TestCheckSpend(t *testing.T) {
 		t.Fatalf("unable to create transaction chain: %v", err)
 	}
 	for _, tx := range chainedTxns {
-		_, err := harness.txPool.ProcessTransaction(tx, true,
+		_, err := harness.txPool.ProcessTransaction(tx, []byte{}, true,
 			false, 0)
 		if err != nil {
 			t.Fatalf("ProcessTransaction: failed to accept "+
@@ -1817,7 +1819,7 @@ func TestRBF(t *testing.T) {
 			// it's not a valid one, we should see the error
 			// expected by the test.
 			_, err = ctx.harness.txPool.ProcessTransaction(
-				replacementTx, false, false, 0,
+				replacementTx, []byte{}, false, false, 0,
 			)
 			if testCase.err == "" && err != nil {
 				ctx.t.Fatalf("expected no error when "+
@@ -1851,3 +1853,84 @@ func TestRBF(t *testing.T) {
 		}
 	}
 }
+
+func validCommitmentForData(d []byte) *wire.Commitmment {
+	// we need protection level 1 to validate hashes
+	comm := wire.NewTxCommitmentVerProtLevel(0, 1)
+	comm.DataSize = uint32(len(d))
+	comm.HashCommitment = sha256.Sum256(d)
+	return comm
+}
+
+// TODO some kinda util package
+func randSliceOfSize(size int) []byte {
+	var slice = make([]byte, size)
+	rand.Read(slice)
+	return slice
+}
+
+func TestTxCommitmentValidation(t *testing.T) {
+
+	testCases := []struct {
+		comm                              *wire.Commitmment
+		data                              []byte
+		expectCommitmentValidationFailure bool
+	}{
+		// fail commitment validation due to nil data, we may rething it in the future
+		{&wire.Commitmment{}, nil, true},
+		// fail commitment validation due to nil data, we may rething it in the future
+		{nil, nil, true},
+		// no commitment empty data, everything is fine
+		{nil, []byte{}, false},
+		// no commitment non empty data, fail validation
+		{nil, []byte{1}, true},
+		// commitment with zero protcection level, zero data size, and empty data. valid
+		{&wire.Commitmment{}, []byte{}, false},
+		// commitment with version above current version. invalid
+		{wire.NewTxCommitmentVerProtLevel(wire.CurrentCommitmentVersion+1, 0), []byte{}, true},
+		// commitment with not supported proteciotn level
+		{wire.NewTxCommitmentVerProtLevel(wire.CurrentCommitmentVersion, 2), []byte{}, true},
+		// commitment with zero protection level, non-zero data size, and empty data. invalid
+		{&wire.Commitmment{DataSize: 1}, []byte{}, true},
+		// commitment with zero protection level, zero data size, and non-empty data. invalid
+		{&wire.Commitmment{}, []byte{1}, true},
+		// valid protection level 1 commitment for empty data
+		{validCommitmentForData([]byte{}), []byte{}, false},
+		// valid protection level 1 commitment for non empty data
+		{validCommitmentForData([]byte{1, 2, 3}), []byte{1, 2, 3}, false},
+		// data of different size, fail validation
+		{validCommitmentForData([]byte{1, 2, 3}), []byte{1}, true},
+		// data of the same size, but different data, fail hash validation
+		{validCommitmentForData([]byte{1, 2, 3}), []byte{3, 2, 1}, true},
+		// Commitment valid in every way, except data is over max size
+		{TooLargeCommitment, tooLargeData, true},
+	}
+
+	harness, _, _ := newPoolHarness(&chaincfg.MainNetParams)
+
+	for _, testCase := range testCases {
+		msgtx := wire.MsgTx{}
+		msgtx.PosCommitment = testCase.comm
+		tx := btcutil.NewTx(&msgtx)
+		_, err := harness.txPool.ProcessTransaction(tx, testCase.data, true, false, 0)
+
+		berr, ok := err.(RuleError).Err.(blockchain.RuleError)
+
+		if ok {
+			if testCase.expectCommitmentValidationFailure {
+				if berr.ErrorCode != blockchain.ErrMalformedPosCommitment {
+					t.Errorf("Unexpected error %v expected %v", berr.ErrorCode, blockchain.ErrMalformedPosCommitment)
+				}
+			} else {
+				if berr.ErrorCode == blockchain.ErrMalformedPosCommitment {
+					t.Errorf("Unexpected error %v", blockchain.ErrMalformedPosCommitment)
+				}
+			}
+		} else {
+			t.Fatalf("Unexpected error: %v", err)
+		}
+	}
+}
+
+var tooLargeData = randSliceOfSize(wire.MaxPosDataSize + 1)
+var TooLargeCommitment = validCommitmentForData(tooLargeData)

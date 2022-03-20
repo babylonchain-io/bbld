@@ -10,5 +10,7 @@ const (
 	MaxPosDataSize = 50000
 
 	// Maximum size of Proof of stake chain signature
-	maxPosSigSize = 128
+	MaxPosSigSize = 128
+
+	CurrentCommitmentVersion = 0
 )

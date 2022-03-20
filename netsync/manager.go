@@ -592,7 +592,9 @@ func (sm *SyncManager) handleTxMsg(tmsg *txMsg) {
 
 	// Process the transaction to include validation, insertion in the
 	// memory pool, orphan handling, etc.
-	acceptedTxs, err := sm.txMemPool.ProcessTransaction(tmsg.tx,
+	// TODO BPC-27: Pass actual PosData received form another peer, For now passing
+	// empty slice
+	acceptedTxs, err := sm.txMemPool.ProcessTransaction(tmsg.tx, []byte{},
 		true, true, mempool.Tag(peer.ID()))
 
 	// Remove transaction from request maps. Either the mempool/chain
@@ -1456,7 +1458,9 @@ func (sm *SyncManager) handleBlockchainNotification(notification *blockchain.Not
 		// Reinsert all of the transactions (except the coinbase) into
 		// the transaction pool.
 		for _, tx := range block.Transactions()[1:] {
-			_, _, err := sm.txMemPool.MaybeAcceptTransaction(tx,
+			// TODO BPC-29: Pass actual PosData received form another peer, For now passing
+			// empty slice
+			_, _, err := sm.txMemPool.MaybeAcceptTransaction(tx, []byte{},
 				false, false)
 			if err != nil {
 				// Remove the transaction and all transactions

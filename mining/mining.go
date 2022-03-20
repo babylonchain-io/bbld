@@ -39,6 +39,8 @@ type TxDesc struct {
 	// Tx is the transaction associated with the entry.
 	Tx *btcutil.Tx
 
+	PosData []byte
+
 	// Added is the time when the entry was added to the source pool.
 	Added time.Time
 

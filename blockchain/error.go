@@ -220,6 +220,10 @@ const (
 	// current chain tip. This is not a block validation rule, but is required
 	// for block proposals submitted via getblocktemplate RPC.
 	ErrPrevBlockNotBest
+
+	// ErrMalformedPosCommitment indicates that transaction pos commitment did
+	// not match provided data
+	ErrMalformedPosCommitment
 )
 
 // Map of ErrorCode values back to their constant names for pretty printing.
@@ -267,6 +271,7 @@ var errorCodeStrings = map[ErrorCode]string{
 	ErrPreviousBlockUnknown:      "ErrPreviousBlockUnknown",
 	ErrInvalidAncestorBlock:      "ErrInvalidAncestorBlock",
 	ErrPrevBlockNotBest:          "ErrPrevBlockNotBest",
+	ErrMalformedPosCommitment:    "ErrMalformedPosCommitment",
 }
 
 // String returns the ErrorCode as a human-readable name.
