@@ -358,7 +358,7 @@ func (c *Commitmment) ReadCommitment(r io.Reader, pver uint32) error {
 
 	c.Nonce = nonce
 
-	c.PosSig, err = ReadVarBytes(r, pver, maxPosSigSize, "PosSig")
+	c.PosSig, err = ReadVarBytes(r, pver, MaxPosSigSize, "PosSig")
 
 	return err
 }
@@ -422,6 +422,19 @@ func NewTxCommitment(
 		HashCommitment: hashCommitment,
 		Nonce:          nonce,
 		PosSig:         signature,
+	}
+}
+
+func NewTxCommitmentVerProtLevel(
+	version uint8,
+	protectionLevel uint8) *Commitmment {
+
+	var verProt uint8
+	verProt = (verProt & 0xf0) | (version & 0xf)
+	verProt = (verProt & 0xf) | (protectionLevel << 4)
+
+	return &Commitmment{
+		verProt: verProt,
 	}
 }
 
@@ -950,6 +963,10 @@ func (msg *MsgTx) HasWitness() bool {
 	}
 
 	return false
+}
+
+func (msg *MsgTx) HasPosCommitment() bool {
+	return msg.PosCommitment != nil
 }
 
 // Serialize encodes the transaction to w using a format that suitable for

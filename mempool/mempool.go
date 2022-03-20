@@ -971,10 +971,24 @@ func (mp *TxPool) maybeAcceptTransaction(tx *btcutil.Tx, posData []byte, isNew, 
 		return nil, nil, txRuleError(wire.RejectDuplicate, str)
 	}
 
+	// do all context independent commitment checks as first things, as data can
+	// be pretty large and we can fail bad transaction as fast as possible
+	err := blockchain.CheckTransactionCommitment(tx, posData)
+	if err != nil {
+		if cerr, ok := err.(blockchain.RuleError); ok {
+			return nil, nil, chainRuleError(cerr)
+		}
+		return nil, nil, err
+	}
+
+	// TODO BPC-39 We should validate that data in transaction is properaly payed
+	// for to avoid any memory exhaustion attacks, also it may necessary to deal with
+	// with clashes between data in different transactions
+
 	// Perform preliminary sanity checks on the transaction.  This makes
 	// use of blockchain which contains the invariant rules for what
 	// transactions are allowed into blocks.
-	err := blockchain.CheckTransactionSanity(tx)
+	err = blockchain.CheckTransactionSanity(tx)
 	if err != nil {
 		if cerr, ok := err.(blockchain.RuleError); ok {
 			return nil, nil, chainRuleError(cerr)

@@ -5,6 +5,8 @@
 package blockchain
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"math"
@@ -173,6 +175,67 @@ func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params) int64 {
 
 	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
 	return baseSubsidy >> uint(height/chainParams.SubsidyReductionInterval)
+}
+
+func CheckTransactionCommitment(tx *btcutil.Tx, posData []byte) error {
+	// TODO consider alowing nil data for tx without commitment, as it may be innecficient
+	// to constantly allocate empty slices
+	if posData == nil {
+		return ruleError(ErrMalformedPosCommitment, "provided data is nil")
+	}
+
+	dataLen := len(posData)
+
+	if !tx.MsgTx().HasPosCommitment() {
+		if dataLen == 0 {
+			// transaction without commitments and empty data, everything is fine
+			return nil
+		} else {
+			return ruleError(ErrMalformedPosCommitment, "data attached to nil commitment transaction")
+		}
+	}
+
+	if tx.MsgTx().PosCommitment.Version() > wire.CurrentCommitmentVersion {
+		// We need to validate versions to avoid having some junk versions in blockchain
+		// in case we increase version later
+		return ruleError(ErrMalformedPosCommitment, "Unsupported commitment versions")
+	}
+
+	if len(tx.MsgTx().PosCommitment.PosSig) > wire.MaxPosSigSize {
+		return ruleError(ErrMalformedPosCommitment, "too long commitment signature")
+	}
+
+	if tx.MsgTx().PosCommitment.ProtectionLevel() == 0 {
+		// When protection level is 0, we do not validate hash against the data, and there
+		// should be no data attached. Effectivly it meas that commitment commits only
+		// to hash of data
+		if tx.MsgTx().PosCommitment.DataSize > 0 || dataLen > 0 {
+			return ruleError(ErrMalformedPosCommitment, "data attached to commitment with 0 protection level")
+		}
+
+		return nil
+	} else if tx.MsgTx().PosCommitment.ProtectionLevel() == 1 {
+
+		if tx.MsgTx().PosCommitment.DataSize != uint32(dataLen) {
+			return ruleError(ErrMalformedPosCommitment, "length of data do not match commitment")
+		}
+
+		if tx.MsgTx().PosCommitment.DataSize > wire.MaxPosDataSize {
+			return ruleError(ErrMalformedPosCommitment, "data larger than maximum")
+		}
+
+		hash := sha256.Sum256(posData)
+
+		if !bytes.Equal(hash[:], tx.MsgTx().PosCommitment.HashCommitment[:]) {
+			return ruleError(ErrMalformedPosCommitment, "hash of data do not match commitment")
+		}
+
+		return nil
+	} else {
+		// We need to validate protecion level to avoid having some junk
+		// protection levels in blockchain in case we add new one later
+		return ruleError(ErrMalformedPosCommitment, "unknown protecion level")
+	}
 }
 
 // CheckTransactionSanity performs some preliminary checks on a transaction to
