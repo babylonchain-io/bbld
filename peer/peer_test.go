@@ -383,6 +383,9 @@ func TestPeerListeners(t *testing.T) {
 			OnTx: func(p *peer.Peer, msg *wire.MsgTx) {
 				ok <- msg
 			},
+			OnTxData: func(p *peer.Peer, msg *wire.MsgTxData) {
+				ok <- msg
+			},
 			OnBlock: func(p *peer.Peer, msg *wire.MsgBlock, buf []byte) {
 				ok <- msg
 			},
@@ -515,6 +518,10 @@ func TestPeerListeners(t *testing.T) {
 		{
 			"OnTx",
 			wire.NewMsgTx(wire.TxVersion),
+		},
+		{
+			"OnTxData",
+			wire.NewMsgTxData(wire.NewMsgTx(wire.TxVersion), []byte{}),
 		},
 		{
 			"OnBlock",

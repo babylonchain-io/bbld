@@ -536,6 +536,7 @@ func (sp *serverPeer) OnMemPool(_ *peer.Peer, msg *wire.MsgMemPool) {
 // until the bitcoin transaction has been fully processed.  Unlock the block
 // handler this does not serialize all transactions through a single thread
 // transactions don't rely on the previous one in a linear fashion like blocks.
+// TODO: after babylon modification it is not used, so consider removing it
 func (sp *serverPeer) OnTx(_ *peer.Peer, msg *wire.MsgTx) {
 	if cfg.BlocksOnly {
 		peerLog.Tracef("Ignoring tx %v from %v - blocksonly enabled",
@@ -555,7 +556,34 @@ func (sp *serverPeer) OnTx(_ *peer.Peer, msg *wire.MsgTx) {
 	// processed and known good or bad.  This helps prevent a malicious peer
 	// from queuing up a bunch of bad transactions before disconnecting (or
 	// being disconnected) and wasting memory.
-	sp.server.syncManager.QueueTx(tx, sp.Peer, sp.txProcessed)
+	sp.server.syncManager.QueueTx(tx, []byte{}, sp.Peer, sp.txProcessed)
+	<-sp.txProcessed
+}
+
+// OnTx is invoked when a peer receives a tx wit data babylon message.  It blocks
+// until the babylon transaction and data have been fully processed.  Unlock the block
+// handler this does not serialize all transactions through a single thread
+// transactions don't rely on the previous one in a linear fashion like blocks.
+func (sp *serverPeer) OnTxWithData(_ *peer.Peer, msg *wire.MsgTxData) {
+	if cfg.BlocksOnly {
+		peerLog.Tracef("Ignoring tx %v from %v - blocksonly enabled",
+			msg.Tx.TxHash(), sp)
+		return
+	}
+
+	// Add the transaction to the known inventory for the peer.
+	// Convert the raw MsgTx to a btcutil.Tx which provides some convenience
+	// methods and things such as hash caching.
+	tx := btcutil.NewTx(&msg.Tx)
+	iv := wire.NewInvVect(wire.InvTypeTx, tx.Hash())
+	sp.AddKnownInventory(iv)
+
+	// Queue the transaction up to be handled by the sync manager and
+	// intentionally block further receives until the transaction is fully
+	// processed and known good or bad.  This helps prevent a malicious peer
+	// from queuing up a bunch of bad transactions before disconnecting (or
+	// being disconnected) and wasting memory.
+	sp.server.syncManager.QueueTx(tx, msg.Data, sp.Peer, sp.txProcessed)
 	<-sp.txProcessed
 }
 
@@ -1437,7 +1465,7 @@ func (s *server) pushTxMsg(sp *serverPeer, hash *chainhash.Hash, doneChan chan<-
 	// Attempt to fetch the requested transaction from the pool.  A
 	// call could be made to check for existence first, but simply trying
 	// to fetch a missing transaction results in the same behavior.
-	tx, err := s.txMemPool.FetchTransaction(hash)
+	tx, posData, err := s.txMemPool.FetchTransaction(hash)
 	if err != nil {
 		peerLog.Tracef("Unable to fetch tx %v from transaction "+
 			"pool: %v", hash, err)
@@ -1453,7 +1481,10 @@ func (s *server) pushTxMsg(sp *serverPeer, hash *chainhash.Hash, doneChan chan<-
 		<-waitChan
 	}
 
-	sp.QueueMessageWithEncoding(tx.MsgTx(), doneChan, encoding)
+	// Babylon Modification: for transaction messages we respond with txwithData,
+	// instead of tx. PosData in mempool is always present so we do not need to check for nil
+	txWithData := wire.NewMsgTxData(tx.MsgTx(), posData)
+	sp.QueueMessageWithEncoding(txWithData, doneChan, encoding)
 
 	return nil
 }
@@ -2029,6 +2060,7 @@ func newPeerConfig(sp *serverPeer) *peer.Config {
 			OnVerAck:       sp.OnVerAck,
 			OnMemPool:      sp.OnMemPool,
 			OnTx:           sp.OnTx,
+			OnTxData:       sp.OnTxWithData,
 			OnBlock:        sp.OnBlock,
 			OnInv:          sp.OnInv,
 			OnHeaders:      sp.OnHeaders,

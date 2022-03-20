@@ -2606,7 +2606,7 @@ func handleGetRawTransaction(s *rpcServer, cmd interface{}, closeChan <-chan str
 	var mtx *wire.MsgTx
 	var blkHash *chainhash.Hash
 	var blkHeight int32
-	tx, err := s.cfg.TxMemPool.FetchTransaction(txHash)
+	tx, _, err := s.cfg.TxMemPool.FetchTransaction(txHash)
 	if err != nil {
 		if s.cfg.TxIndex == nil {
 			return nil, &btcjson.RPCError{
@@ -2729,7 +2729,7 @@ func handleGetTxOut(s *rpcServer, cmd interface{}, closeChan <-chan struct{}) (i
 	// TODO: This is racy.  It should attempt to fetch it directly and check
 	// the error.
 	if includeMempool && s.cfg.TxMemPool.HaveTransaction(txHash) {
-		tx, err := s.cfg.TxMemPool.FetchTransaction(txHash)
+		tx, _, err := s.cfg.TxMemPool.FetchTransaction(txHash)
 		if err != nil {
 			return nil, rpcNoTxInfoError(txHash)
 		}
@@ -2886,7 +2886,7 @@ func fetchInputTxos(s *rpcServer, tx *wire.MsgTx) (map[wire.OutPoint]wire.TxOut,
 		// Attempt to fetch and use the referenced transaction from the
 		// memory pool.
 		origin := &txIn.PreviousOutPoint
-		originTx, err := mp.FetchTransaction(&origin.Hash)
+		originTx, _, err := mp.FetchTransaction(&origin.Hash)
 		if err == nil {
 			txOuts := originTx.MsgTx().TxOut
 			if origin.Index >= uint32(len(txOuts)) {
