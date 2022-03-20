@@ -94,9 +94,10 @@ type donePeerMsg struct {
 // txMsg packages a bitcoin tx message and the peer it came from together
 // so the block handler has access to that information.
 type txMsg struct {
-	tx    *btcutil.Tx
-	peer  *peerpkg.Peer
-	reply chan struct{}
+	tx      *btcutil.Tx
+	posData []byte
+	peer    *peerpkg.Peer
+	reply   chan struct{}
 }
 
 // getSyncPeerMsg is a message type to be sent across the message channel for
@@ -592,9 +593,7 @@ func (sm *SyncManager) handleTxMsg(tmsg *txMsg) {
 
 	// Process the transaction to include validation, insertion in the
 	// memory pool, orphan handling, etc.
-	// TODO BPC-27: Pass actual PosData received form another peer, For now passing
-	// empty slice
-	acceptedTxs, err := sm.txMemPool.ProcessTransaction(tmsg.tx, []byte{},
+	acceptedTxs, err := sm.txMemPool.ProcessTransaction(tmsg.tx, tmsg.posData,
 		true, true, mempool.Tag(peer.ID()))
 
 	// Remove transaction from request maps. Either the mempool/chain
@@ -1489,14 +1488,14 @@ func (sm *SyncManager) NewPeer(peer *peerpkg.Peer) {
 // QueueTx adds the passed transaction message and peer to the block handling
 // queue. Responds to the done channel argument after the tx message is
 // processed.
-func (sm *SyncManager) QueueTx(tx *btcutil.Tx, peer *peerpkg.Peer, done chan struct{}) {
+func (sm *SyncManager) QueueTx(tx *btcutil.Tx, posData []byte, peer *peerpkg.Peer, done chan struct{}) {
 	// Don't accept more transactions if we're shutting down.
 	if atomic.LoadInt32(&sm.shutdown) != 0 {
 		done <- struct{}{}
 		return
 	}
 
-	sm.msgChan <- &txMsg{tx: tx, peer: peer, reply: done}
+	sm.msgChan <- &txMsg{tx: tx, posData: posData, peer: peer, reply: done}
 }
 
 // QueueBlock adds the passed block message and peer to the block handling

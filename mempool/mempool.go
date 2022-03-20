@@ -823,17 +823,17 @@ func (mp *TxPool) fetchInputUtxos(tx *btcutil.Tx) (*blockchain.UtxoViewpoint, er
 // orphans.
 //
 // This function is safe for concurrent access.
-func (mp *TxPool) FetchTransaction(txHash *chainhash.Hash) (*btcutil.Tx, error) {
+func (mp *TxPool) FetchTransaction(txHash *chainhash.Hash) (*btcutil.Tx, []byte, error) {
 	// Protect concurrent access.
 	mp.mtx.RLock()
 	txDesc, exists := mp.pool[*txHash]
 	mp.mtx.RUnlock()
 
 	if exists {
-		return txDesc.Tx, nil
+		return txDesc.Tx, txDesc.PosData, nil
 	}
 
-	return nil, fmt.Errorf("transaction is not in the pool")
+	return nil, nil, fmt.Errorf("transaction is not in the pool")
 }
 
 // validateReplacement determines whether a transaction is deemed as a valid
