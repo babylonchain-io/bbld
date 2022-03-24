@@ -53,7 +53,7 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, nil)
+				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, nil, nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","params":[[{"txid":"123","vout":1}],{"456":0.0123}],"id":1}`,
 			unmarshalled: &btcjson.CreateRawTransactionCmd{
@@ -68,7 +68,7 @@ func TestChainSvrCmds(t *testing.T) {
 			},
 			staticCmd: func() interface{} {
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(nil, amounts, nil)
+				return btcjson.NewCreateRawTransactionCmd(nil, amounts, nil, nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","params":[[],{"456":0.0123}],"id":1}`,
 			unmarshalled: &btcjson.CreateRawTransactionCmd{
@@ -87,13 +87,35 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, btcjson.Int64(12312333333))
+				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, btcjson.Int64(12312333333), nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","params":[[{"txid":"123","vout":1}],{"456":0.0123},12312333333],"id":1}`,
 			unmarshalled: &btcjson.CreateRawTransactionCmd{
 				Inputs:   []btcjson.TransactionInput{{Txid: "123", Vout: 1}},
 				Amounts:  map[string]float64{"456": .0123},
 				LockTime: btcjson.Int64(12312333333),
+			},
+		},
+		{
+			name: "createrawtransaction commitment",
+			newCmd: func() (interface{}, error) {
+				return btcjson.NewCmd("createrawtransaction", `[{"txid":"123","vout":1}]`,
+					`{"456":0.0123}`, int64(12312333333), `{"tag":"0xa1","hashOrData":"0xa2","protectionLevel": 0,"nonce": 1,"posSignature": "0xa3"}`)
+			},
+			staticCmd: func() interface{} {
+				txInputs := []btcjson.TransactionInput{
+					{Txid: "123", Vout: 1},
+				}
+				amounts := map[string]float64{"456": .0123}
+				input := &btcjson.PosDataInput{Tag: "0xa1", HashOrData: "0xa2", ProtectionLevel: 0, Nonce: 1, PosSig: "0xa3"}
+				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, btcjson.Int64(12312333333), input)
+			},
+			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","params":[[{"txid":"123","vout":1}],{"456":0.0123},12312333333,{"tag":"0xa1","hashOrData":"0xa2","protectionLevel":0,"nonce":1,"posSignature":"0xa3"}],"id":1}`,
+			unmarshalled: &btcjson.CreateRawTransactionCmd{
+				Inputs:   []btcjson.TransactionInput{{Txid: "123", Vout: 1}},
+				Amounts:  map[string]float64{"456": .0123},
+				LockTime: btcjson.Int64(12312333333),
+				PosData:  &btcjson.PosDataInput{Tag: "0xa1", HashOrData: "0xa2", ProtectionLevel: 0, Nonce: 1, PosSig: "0xa3"},
 			},
 		},
 		{
@@ -1227,7 +1249,7 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendrawtransaction", "1122", &btcjson.AllowHighFeesOrMaxFeeRate{})
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendRawTransactionCmd("1122", nil)
+				return btcjson.NewSendRawTransactionCmd("1122", nil, nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"sendrawtransaction","params":["1122",false],"id":1}`,
 			unmarshalled: &btcjson.SendRawTransactionCmd{
@@ -1243,7 +1265,7 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendrawtransaction", "1122", &btcjson.AllowHighFeesOrMaxFeeRate{Value: btcjson.Bool(false)})
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendRawTransactionCmd("1122", btcjson.Bool(false))
+				return btcjson.NewSendRawTransactionCmd("1122", btcjson.Bool(false), nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"sendrawtransaction","params":["1122",false],"id":1}`,
 			unmarshalled: &btcjson.SendRawTransactionCmd{
@@ -1267,6 +1289,23 @@ func TestChainSvrCmds(t *testing.T) {
 				FeeSetting: &btcjson.AllowHighFeesOrMaxFeeRate{
 					Value: btcjson.Int32(1234),
 				},
+			},
+		},
+		{
+			name: "sendrawtransaction optional data",
+			newCmd: func() (interface{}, error) {
+				return btcjson.NewCmd("sendrawtransaction", "1122", &btcjson.AllowHighFeesOrMaxFeeRate{Value: btcjson.Bool(false)}, "2211")
+			},
+			staticCmd: func() interface{} {
+				return btcjson.NewSendRawTransactionCmd("1122", btcjson.Bool(false), func(s string) *string { return &s }("2211"))
+			},
+			marshalled: `{"jsonrpc":"1.0","method":"sendrawtransaction","params":["1122",false,"2211"],"id":1}`,
+			unmarshalled: &btcjson.SendRawTransactionCmd{
+				HexTx: "1122",
+				FeeSetting: &btcjson.AllowHighFeesOrMaxFeeRate{
+					Value: btcjson.Bool(false),
+				},
+				HexData: func(s string) *string { return &s }("2211"),
 			},
 		},
 		{
