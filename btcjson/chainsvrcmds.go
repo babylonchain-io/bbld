@@ -48,6 +48,16 @@ func NewAddNodeCmd(addr string, subCmd AddNodeSubCmd) *AddNodeCmd {
 	}
 }
 
+// PosDataInput represents all data necessery to create correct commitment to data
+type PosDataInput struct {
+	Tag             string `json:"tag"`
+	HashOrData      string `json:"hashOrData"`
+	ProtectionLevel uint8  `json:"protectionLevel"`
+	// TODO-Babylon define if nonce is really needed and how it will be used
+	Nonce  uint32 `json:"nonce"`
+	PosSig string `json:"posSignature"`
+}
+
 // TransactionInput represents the inputs to a transaction.  Specifically a
 // transaction hash and output number pair.
 type TransactionInput struct {
@@ -60,6 +70,7 @@ type CreateRawTransactionCmd struct {
 	Inputs   []TransactionInput
 	Amounts  map[string]float64 `jsonrpcusage:"{\"address\":amount,...}"` // In BTC
 	LockTime *int64
+	PosData  *PosDataInput
 }
 
 // NewCreateRawTransactionCmd returns a new instance which can be used to issue
@@ -68,7 +79,7 @@ type CreateRawTransactionCmd struct {
 // Amounts are in BTC. Passing in nil and the empty slice as inputs is equivalent,
 // both gets interpreted as the empty slice.
 func NewCreateRawTransactionCmd(inputs []TransactionInput, amounts map[string]float64,
-	lockTime *int64) *CreateRawTransactionCmd {
+	lockTime *int64, posDataInput *PosDataInput) *CreateRawTransactionCmd {
 	// to make sure we're serializing this to the empty list and not null, we
 	// explicitly initialize the list
 	if inputs == nil {
@@ -78,6 +89,7 @@ func NewCreateRawTransactionCmd(inputs []TransactionInput, amounts map[string]fl
 		Inputs:   inputs,
 		Amounts:  amounts,
 		LockTime: lockTime,
+		PosData:  posDataInput,
 	}
 }
 
@@ -874,6 +886,7 @@ func (a *AllowHighFeesOrMaxFeeRate) UnmarshalJSON(data []byte) error {
 type SendRawTransactionCmd struct {
 	HexTx      string
 	FeeSetting *AllowHighFeesOrMaxFeeRate `jsonrpcdefault:"false"`
+	HexData    *string
 }
 
 // NewSendRawTransactionCmd returns a new instance which can be used to issue a
@@ -881,12 +894,13 @@ type SendRawTransactionCmd struct {
 //
 // The parameters which are pointers indicate they are optional.  Passing nil
 // for optional parameters will use the default value.
-func NewSendRawTransactionCmd(hexTx string, allowHighFees *bool) *SendRawTransactionCmd {
+func NewSendRawTransactionCmd(hexTx string, allowHighFees *bool, hexData *string) *SendRawTransactionCmd {
 	return &SendRawTransactionCmd{
 		HexTx: hexTx,
 		FeeSetting: &AllowHighFeesOrMaxFeeRate{
 			Value: allowHighFees,
 		},
+		HexData: hexData,
 	}
 }
 

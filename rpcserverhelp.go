@@ -44,6 +44,13 @@ var helpDescsEnUS = map[string]string{
 	"transactioninput-txid": "The hash of the input transaction",
 	"transactioninput-vout": "The specific output of the input transaction to redeem",
 
+	// PosDataInput help.
+	"posdatainput-tag":             "Hex encoded byte string which must have 32 bytes identifing commitment",
+	"posdatainput-hashOrData":      "Based on protectionLevel it should be either hex encoded data or hex encdoed hash of data",
+	"posdatainput-protectionLevel": "if its 0, there will be no data attached to commtiment and hashOrData should have 32bytes, otherwise data provided in hasOrData will be hashed",
+	"posdatainput-nonce":           "Nonce used for ordering of commitments",
+	"posdatainput-posSignature":    "Hex encoded pos signature over all fields; max 128 bytes",
+
 	// CreateRawTransactionCmd help.
 	"createrawtransaction--synopsis": "Returns a new transaction spending the provided inputs and sending to the provided addresses.\n" +
 		"The transaction inputs are not signed in the created transaction.\n" +
@@ -54,6 +61,7 @@ var helpDescsEnUS = map[string]string{
 	"createrawtransaction-amounts--value": "n.nnn",
 	"createrawtransaction-amounts--desc":  "The destination address as the key and the amount in BTC as the value",
 	"createrawtransaction-locktime":       "Locktime value; a non-zero value will also locktime-activate the inputs",
+	"createrawtransaction-posdata":        "Optional data required to create commitment to proof of stake data",
 	"createrawtransaction--result0":       "Hex-encoded bytes of the serialized transaction",
 
 	// ScriptSig help.
@@ -566,6 +574,7 @@ var helpDescsEnUS = map[string]string{
 	"sendrawtransaction--synopsis":    "Submits the serialized, hex-encoded transaction to the local peer and relays it to the network.",
 	"sendrawtransaction-hextx":        "Serialized, hex-encoded signed transaction",
 	"sendrawtransaction-feesetting":   "Whether or not to allow insanely high fees in bitcoind < v0.19.0 or the max fee rate for bitcoind v0.19.0 and later (btcd does not yet implement this parameter, so it has no effect)",
+	"sendrawtransaction-hexdata":      "hexencoded data which should match data whihc is declared in transaction commitment",
 	"sendrawtransaction--result0":     "The hash of the transaction",
 	"allowhighfeesormaxfeerate-value": "Either the boolean value for the allowhighfees parameter in bitcoind < v0.19.0 or the numerical value for the maxfeerate field in bitcoind v0.19.0 and later",
 

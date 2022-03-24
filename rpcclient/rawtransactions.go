@@ -297,7 +297,8 @@ func (c *Client) CreateRawTransactionAsync(inputs []btcjson.TransactionInput,
 	for addr, amount := range amounts {
 		convertedAmts[addr.String()] = amount.ToBTC()
 	}
-	cmd := btcjson.NewCreateRawTransactionCmd(inputs, convertedAmts, lockTime)
+	// TODO-Babylon: Update to pass also commitment data
+	cmd := btcjson.NewCreateRawTransactionCmd(inputs, convertedAmts, lockTime, nil)
 	return c.SendCmd(cmd)
 }
 
@@ -371,7 +372,8 @@ func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) Fut
 
 	// Otherwise, use the AllowHighFees field.
 	default:
-		cmd = btcjson.NewSendRawTransactionCmd(txHex, &allowHighFees)
+		// TODO-Babylon: Update to pass also commitment data
+		cmd = btcjson.NewSendRawTransactionCmd(txHex, &allowHighFees, nil)
 	}
 
 	return c.SendCmd(cmd)

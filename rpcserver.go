@@ -513,6 +513,88 @@ func messageToHex(msg wire.Message) (string, error) {
 	return hex.EncodeToString(buf.Bytes()), nil
 }
 
+func decodeHexString(s string) ([]byte, error) {
+	hexStr := s
+	if len(hexStr)%2 != 0 {
+		hexStr = "0" + hexStr
+	}
+	return hex.DecodeString(hexStr)
+}
+
+func decodeCommitment(p *btcjson.PosDataInput) (*wire.Commitmment, error) {
+	posSig, err := decodeHexString(p.PosSig)
+	if err != nil {
+		return nil, rpcDecodeHexError(p.PosSig)
+	}
+
+	if len(posSig) > wire.MaxPosSigSize {
+		return nil, &btcjson.RPCError{
+			Code:    btcjson.ErrRPCInvalidParameter,
+			Message: "Signaure should have max 128 bytes",
+		}
+	}
+
+	tag, err := decodeHexString(p.Tag)
+	if err != nil {
+		return nil, rpcDecodeHexError(p.PosSig)
+	}
+
+	if len(tag) != wire.TagSize {
+		return nil, &btcjson.RPCError{
+			Code:    btcjson.ErrRPCInvalidParameter,
+			Message: "Tag should have exactly 32 bytes",
+		}
+	}
+	var tagArr [wire.TagSize]byte
+	copy(tagArr[:], tag)
+
+	hashOrData, err := decodeHexString(p.HashOrData)
+
+	if err != nil {
+		return nil, rpcDecodeHexError(p.HashOrData)
+	}
+
+	var dataSize int
+	var hash [chainhash.HashSize]byte
+
+	if p.ProtectionLevel == 0 {
+		// if protection level is zero, then field HashOrData should be and
+		// hash of some data and data size will be equal to 0
+		if len(hashOrData) > chainhash.HashSize {
+			return nil, &btcjson.RPCError{
+				Code:    btcjson.ErrRPCInvalidParameter,
+				Message: "With 0 protection level, HashOrData should represent 32 byte hash",
+			}
+		}
+		dataSize = 0
+		copy(hash[:], hashOrData)
+	} else if p.ProtectionLevel == 1 {
+		if len(hashOrData) > wire.MaxPosDataSize {
+			msg := fmt.Sprintf("Too long data, maximal size is %d", wire.MaxPosDataSize)
+			return nil, &btcjson.RPCError{
+				Code:    btcjson.ErrRPCInvalidParameter,
+				Message: msg,
+			}
+		}
+		dataSize = len(hashOrData)
+		hash = sha256.Sum256(hashOrData)
+	} else {
+		return nil, &btcjson.RPCError{
+			Code:    btcjson.ErrRPCInvalidParameter,
+			Message: "Unsuportted protection level",
+		}
+	}
+
+	return wire.NewTxCommitment(
+		tagArr,
+		wire.CurrentCommitmentVersion,
+		p.ProtectionLevel,
+		uint32(dataSize),
+		hash,
+		p.Nonce,
+		posSig), nil
+}
+
 // handleCreateRawTransaction handles createrawtransaction commands.
 func handleCreateRawTransaction(s *rpcServer, cmd interface{}, closeChan <-chan struct{}) (interface{}, error) {
 	c := cmd.(*btcjson.CreateRawTransactionCmd)
@@ -605,6 +687,14 @@ func handleCreateRawTransaction(s *rpcServer, cmd interface{}, closeChan <-chan 
 	// Set the Locktime, if given.
 	if c.LockTime != nil {
 		mtx.LockTime = uint32(*c.LockTime)
+	}
+
+	if c.PosData != nil {
+		commitment, err := decodeCommitment(c.PosData)
+		if err != nil {
+			return nil, err
+		}
+		mtx.PosCommitment = commitment
 	}
 
 	// Return the serialized and hex-encoded transaction.  Note that this
@@ -3369,11 +3459,25 @@ func handleSendRawTransaction(s *rpcServer, cmd interface{}, closeChan <-chan st
 		}
 	}
 
+	var posData []byte
+	if c.HexData != nil {
+		hexDataStr := c.HexData
+		if len(*hexDataStr)%2 != 0 {
+			*hexDataStr = "0" + *hexDataStr
+		}
+		data, err := hex.DecodeString(*hexDataStr)
+		if err != nil {
+			return nil, rpcDecodeHexError(*hexDataStr)
+		}
+		posData = data
+	} else {
+		posData = make([]byte, 0)
+	}
+
 	// Use 0 for the tag to represent local node.
 	tx := btcutil.NewTx(&msgTx)
-	// TODO BPC-28: Pass actual PosData received form another peer, For now passing
-	// empty slice
-	acceptedTxs, err := s.cfg.TxMemPool.ProcessTransaction(tx, []byte{}, false, false, 0)
+
+	acceptedTxs, err := s.cfg.TxMemPool.ProcessTransaction(tx, posData, false, false, 0)
 	if err != nil {
 		// When the error is a rule error, it means the transaction was
 		// simply rejected as opposed to something actually going wrong,
