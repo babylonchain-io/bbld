@@ -37,12 +37,34 @@ type TxLoc struct {
 	TxLen   int
 }
 
+// All additional pos data which block is carrying. Data should be sorted in the same way
+// as transactions with commitments in block
+type Data [][]byte
+
+// SerializeSize returns the number of bytes it would take to serialize the the
+// data carried by the block
+func (t Data) SerializeSize() int {
+	// A varint to signal the number of elements the pos data has.
+	n := VarIntSerializeSize(uint64(len(t)))
+
+	// For each element in the data, we'll need a varint to signal the
+	// size of the element, then finally the number of bytes the element
+	// itself comprises.
+	for _, dataItem := range t {
+		n += VarIntSerializeSize(uint64(len(dataItem)))
+		n += len(dataItem)
+	}
+
+	return n
+}
+
 // MsgBlock implements the Message interface and represents a bitcoin
 // block message.  It is used to deliver block and transaction information in
 // response to a getdata message (MsgGetData) for a given block hash.
 type MsgBlock struct {
 	Header       BlockHeader
 	Transactions []*MsgTx
+	PosData      Data
 }
 
 // AddTransaction adds a transaction to the message.
@@ -50,6 +72,20 @@ func (msg *MsgBlock) AddTransaction(tx *MsgTx) error {
 	msg.Transactions = append(msg.Transactions, tx)
 	return nil
 
+}
+
+// Add additional data to the message
+func (msg *MsgBlock) AddData(data []byte) error {
+	msg.PosData = append(msg.PosData, data)
+	return nil
+}
+
+// // AddTransactionWithData adds a transaction to the message with attached data,
+// // transaction should carry commitment and and data should be non-nil and not empty
+func (msg *MsgBlock) AddTransactionWithData(tx *MsgTx, data []byte) error {
+	msg.Transactions = append(msg.Transactions, tx)
+	msg.PosData = append(msg.PosData, data)
+	return nil
 }
 
 // ClearTransactions removes all transactions from the message.
@@ -81,6 +117,10 @@ func (msg *MsgBlock) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) er
 		return messageError("MsgBlock.BtcDecode", str)
 	}
 
+	// number of transaction which carry commitment indicating that they should have
+	// data attached
+	var numOfTxWithData uint64 = 0
+
 	msg.Transactions = make([]*MsgTx, 0, txCount)
 	for i := uint64(0); i < txCount; i++ {
 		tx := MsgTx{}
@@ -88,7 +128,36 @@ func (msg *MsgBlock) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) er
 		if err != nil {
 			return err
 		}
+
+		if tx.HasAttachedData() {
+			numOfTxWithData++
+		}
+
 		msg.Transactions = append(msg.Transactions, &tx)
+	}
+
+	dataCount, err := ReadVarInt(r, pver)
+
+	if err != nil {
+		return err
+	}
+
+	// TODO BABYLON: For now we do not delete any data so this check should always be
+	// performed. When we allow data deletion this will need to be updated, to allow
+	// for empty data
+	if dataCount != numOfTxWithData {
+		str := fmt.Sprintf("Number of data slices different that transactions which carry data "+
+			"[dataCount %d, txCount %d]", dataCount, numOfTxWithData)
+		return messageError("MsgBlock.BtcDecode", str)
+	}
+
+	msg.PosData = make([][]byte, 0, dataCount)
+	for i := uint64(0); i < dataCount; i++ {
+		data, err := ReadVarBytes(r, pver, MaxPosDataSize, "block pos data")
+		if err != nil {
+			return err
+		}
+		msg.PosData = append(msg.PosData, data)
 	}
 
 	return nil
@@ -151,6 +220,10 @@ func (msg *MsgBlock) DeserializeTxLoc(r *bytes.Buffer) ([]TxLoc, error) {
 		return nil, messageError("MsgBlock.DeserializeTxLoc", str)
 	}
 
+	// number of transaction which carry commitment indicating that they should have
+	// data attached
+	var numOfTxWithData uint64 = 0
+
 	// Deserialize each transaction while keeping track of its location
 	// within the byte stream.
 	msg.Transactions = make([]*MsgTx, 0, txCount)
@@ -162,8 +235,35 @@ func (msg *MsgBlock) DeserializeTxLoc(r *bytes.Buffer) ([]TxLoc, error) {
 		if err != nil {
 			return nil, err
 		}
+		if tx.HasAttachedData() {
+			numOfTxWithData++
+		}
 		msg.Transactions = append(msg.Transactions, &tx)
 		txLocs[i].TxLen = (fullLen - r.Len()) - txLocs[i].TxStart
+	}
+
+	dataCount, err := ReadVarInt(r, 0)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO BABYLON: For now we do not delete any data so this check should always be
+	// performed. When we allow data deletion this will need to be updated, to allow
+	// for empty data
+	if dataCount != numOfTxWithData {
+		str := fmt.Sprintf("Number of data slices different that transactions which carry data "+
+			"[dataCount %d, txCount %d]", dataCount, numOfTxWithData)
+		return nil, messageError("MsgBlock.BtcDecode", str)
+	}
+
+	msg.PosData = make([][]byte, 0, dataCount)
+	for i := uint64(0); i < dataCount; i++ {
+		data, err := ReadVarBytes(r, 0, MaxPosDataSize, "block pos data")
+		if err != nil {
+			return nil, err
+		}
+		msg.PosData = append(msg.PosData, data)
 	}
 
 	return txLocs, nil
@@ -186,6 +286,19 @@ func (msg *MsgBlock) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) er
 
 	for _, tx := range msg.Transactions {
 		err = tx.BtcEncode(w, pver, enc)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = WriteVarInt(w, pver, uint64(len(msg.PosData)))
+
+	if err != nil {
+		return err
+	}
+
+	for _, data := range msg.PosData {
+		err = WriteVarBytes(w, pver, data)
 		if err != nil {
 			return err
 		}
@@ -234,6 +347,8 @@ func (msg *MsgBlock) SerializeSize() int {
 		n += tx.SerializeSize()
 	}
 
+	n += msg.PosData.SerializeSize()
+
 	return n
 }
 
@@ -247,6 +362,8 @@ func (msg *MsgBlock) SerializeSizeStripped() int {
 	for _, tx := range msg.Transactions {
 		n += tx.SerializeSizeStripped()
 	}
+
+	n += msg.PosData.SerializeSize()
 
 	return n
 }
@@ -286,5 +403,9 @@ func NewMsgBlock(blockHeader *BlockHeader) *MsgBlock {
 	return &MsgBlock{
 		Header:       *blockHeader,
 		Transactions: make([]*MsgTx, 0, defaultTransactionAlloc),
+		// BABYLON TODO: For now we allocate the same as transactions, but this is
+		// probably unrealistics as data can be pretty large, improve when working
+		// on hyperparameters
+		PosData: make([][]byte, 0, defaultTransactionAlloc),
 	}
 }

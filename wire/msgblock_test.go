@@ -6,6 +6,7 @@ package wire
 
 import (
 	"bytes"
+	"crypto/rand"
 	"io"
 	"reflect"
 	"testing"
@@ -465,7 +466,7 @@ func TestBlockSerializeSize(t *testing.T) {
 		size int       // Expected serialized size
 	}{
 		// Block with no transactions.
-		{noTxBlock, 81},
+		{noTxBlock, 82},
 
 		// First block in the mainnet block chain.
 		{&blockOne, len(blockOneBytes)},
@@ -479,6 +480,65 @@ func TestBlockSerializeSize(t *testing.T) {
 				"%d", i, serializedSize, test.size)
 			continue
 		}
+	}
+}
+
+func TestBlockWithCommitmentsEncodingDecoding(t *testing.T) {
+	tests := []struct {
+		in   *MsgBlock
+		size int // Block to encode
+	}{
+		// Block with one transaction with no commitment and one with commitment to 20bytes of data
+		// expected size: header + tx + tx + commitment + data
+		{prepareBlockWithDataAndCommitments(&blockOne, []int{20}), 82 + 135 + 135 + 74 + 21},
+		{
+			prepareBlockWithDataAndCommitments(&blockOne, []int{20, 45}),
+			82 + 135 + 135 + 135 + 74 + 74 + 21 + 46,
+		},
+		{
+			prepareBlockWithDataAndCommitments(&blockOne, []int{20, 45, 1000}),
+			82 + 135 + 135 + 135 + 135 + 74 + 74 + 74 + 21 + 46 + 1003,
+		},
+	}
+
+	t.Logf("Running %d tests", len(tests))
+	for i, test := range tests {
+		serializedSize := test.in.SerializeSize()
+		if serializedSize != test.size {
+			t.Errorf("MsgBlock.SerializeSize: #%d got: %d, want: "+
+				"%d", i, serializedSize, test.size)
+			continue
+		}
+		// Encode the message to wire format.
+		var buf bytes.Buffer
+		err := test.in.BtcEncode(&buf, 0, WitnessEncoding)
+		if err != nil {
+			t.Errorf("MsgBlock.BtcEncode #%d error %v", i, err)
+			continue
+		}
+
+		encLength := buf.Len()
+
+		if encLength != serializedSize {
+			t.Errorf("MsgBlock enc length different from size #%d got: %d, want: "+
+				"%d", i, encLength, serializedSize)
+			continue
+		}
+
+		// Decode the message from wire format.
+		var msg MsgBlock
+		rbuf := bytes.NewReader(buf.Bytes())
+		err = msg.BtcDecode(rbuf, 0, WitnessEncoding)
+		if err != nil {
+			t.Errorf("MsgBlock.BtcDecode #%d error %v", i, err)
+			continue
+		}
+		if !reflect.DeepEqual(&msg, test.in) {
+			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+				spew.Sdump(&msg), spew.Sdump(test.in))
+			continue
+		}
+
 	}
 }
 
@@ -539,6 +599,22 @@ var blockOne = MsgBlock{
 			LockTime: 0,
 		},
 	},
+	PosData: [][]byte{},
+}
+
+func prepareBlockWithDataAndCommitments(b *MsgBlock, dataSizes []int) *MsgBlock {
+	block := *b
+
+	for _, dataSize := range dataSizes {
+		c := generaterateRandomCommitment(0, 1, uint32(dataSize), 0, 0)
+		tx := *b.Transactions[0]
+		tx.PosCommitment = c
+		var randomData = make([]byte, c.DataSize)
+		rand.Read(randomData[:])
+		block.AddTransactionWithData(&tx, randomData)
+	}
+
+	return &block
 }
 
 // Block one serialized bytes.
@@ -582,6 +658,7 @@ var blockOneBytes = []byte{
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
 	0x00, // No commitment in transaction
+	0x00, // No addtional pos data
 }
 
 // Transaction location information for block one transactions.

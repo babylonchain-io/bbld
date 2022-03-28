@@ -1759,7 +1759,10 @@ func Generate(includeLargeReorg bool) (tests [][]TestInstance, err error) {
 		sizePadScript := repeatOpcode(0x00, bytesToMaxSize)
 		replaceSpendScript(sizePadScript)(b)
 	})
-	g.assertTipNonCanonicalBlockSize(maxBlockSize + 8)
+	// BABYLON modificiation - size of block without pos data increased by 1 byte
+	// for varint of empty sequence, therefore we are adding here `+7` instead of
+	// `+8` like in reference implementation
+	g.assertTipNonCanonicalBlockSize(maxBlockSize + 7)
 	rejectedNonCanonical()
 
 	g.setTip("b60")

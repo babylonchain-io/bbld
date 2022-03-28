@@ -965,8 +965,19 @@ func (msg *MsgTx) HasWitness() bool {
 	return false
 }
 
+// Returns true if tx has attached commitment to piece of data
 func (msg *MsgTx) HasPosCommitment() bool {
 	return msg.PosCommitment != nil
+}
+
+// Returns true if tx has attached commitment, and data size on commitment
+// is larger than zero.
+func (msg *MsgTx) HasAttachedData() bool {
+	if !msg.HasPosCommitment() {
+		return false
+	}
+
+	return msg.PosCommitment.DataSize > 0
 }
 
 // Serialize encodes the transaction to w using a format that suitable for

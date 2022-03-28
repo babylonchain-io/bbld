@@ -553,4 +553,5 @@ var Block100000 = wire.MsgBlock{
 			LockTime: 0,
 		},
 	},
+	PosData: make([][]byte, 0),
 }
