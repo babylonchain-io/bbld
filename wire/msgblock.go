@@ -74,6 +74,12 @@ func (msg *MsgBlock) AddTransaction(tx *MsgTx) error {
 
 }
 
+// Add additional data to the message
+func (msg *MsgBlock) AddData(data []byte) error {
+	msg.PosData = append(msg.PosData, data)
+	return nil
+}
+
 // // AddTransactionWithData adds a transaction to the message with attached data,
 // // transaction should carry commitment and and data should be non-nil and not empty
 func (msg *MsgBlock) AddTransactionWithData(tx *MsgTx, data []byte) error {

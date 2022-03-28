@@ -48,6 +48,8 @@ type TxDesc struct {
 	// pool.
 	Height int32
 
+	// TODO-BABYLON: Correctly caluculate fees and feeperkb accounting for pos
+	// data
 	// Fee is the total fee the transaction associated with the entry pays.
 	Fee int64
 
@@ -78,7 +80,10 @@ type TxSource interface {
 // transaction to be prioritized and track dependencies on other transactions
 // which have not been mined into a block yet.
 type txPrioItem struct {
-	tx       *btcutil.Tx
+	tx *btcutil.Tx
+
+	// TODO-BABYLON: Correctly price and calculate fees for pos data
+	posData  []byte
 	fee      int64
 	priority float64
 	feePerKB int64
@@ -482,6 +487,9 @@ func (g *BlkTmplGenerator) NewBlockTemplate(payToAddress btcutil.Address) (*Bloc
 	// house all of the input transactions so multiple lookups can be
 	// avoided.
 	blockTxns := make([]*btcutil.Tx, 0, len(sourceTxns))
+	// Slice to hold all additional non-empty pos data slices.
+	// We create slice w capacity len(sourceTxns) to avoid re-sizing slice.
+	posData := make([][]byte, 0, len(sourceTxns))
 	blockTxns = append(blockTxns, coinbaseTx)
 	blockUtxos := blockchain.NewUtxoViewpoint()
 
@@ -537,7 +545,7 @@ mempoolLoop:
 		// Setup dependencies for any transactions which reference
 		// other transactions in the mempool so they can be properly
 		// ordered below.
-		prioItem := &txPrioItem{tx: tx}
+		prioItem := &txPrioItem{tx: tx, posData: txDesc.PosData}
 		for _, txIn := range tx.MsgTx().TxIn {
 			originHash := &txIn.PreviousOutPoint.Hash
 			entry := utxos.LookupEntry(txIn.PreviousOutPoint)
@@ -769,6 +777,12 @@ mempoolLoop:
 		// save the fees and signature operation counts to the block
 		// template.
 		blockTxns = append(blockTxns, tx)
+
+		if len(prioItem.posData) > 0 {
+			// we onlu append non-empty slices to the message
+			posData = append(posData, prioItem.posData)
+		}
+
 		blockWeight += txWeight
 		blockSigOpCost += int64(sigOpCost)
 		totalFees += prioItem.fee
@@ -836,6 +850,13 @@ mempoolLoop:
 	}
 	for _, tx := range blockTxns {
 		if err := msgBlock.AddTransaction(tx.MsgTx()); err != nil {
+			return nil, err
+		}
+	}
+
+	// adding all data slices in the same order as transactions with commitments
+	for _, data := range posData {
+		if err := msgBlock.AddData(data); err != nil {
 			return nil, err
 		}
 	}
