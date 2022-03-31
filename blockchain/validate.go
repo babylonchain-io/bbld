@@ -178,12 +178,6 @@ func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params) int64 {
 }
 
 func CheckTransactionCommitment(tx *btcutil.Tx, posData []byte) error {
-	// TODO consider alowing nil data for tx without commitment, as it may be innecficient
-	// to constantly allocate empty slices
-	if posData == nil {
-		return ruleError(ErrMalformedPosCommitment, "provided data is nil")
-	}
-
 	dataLen := len(posData)
 
 	if !tx.MsgTx().HasPosCommitment() {
@@ -215,6 +209,9 @@ func CheckTransactionCommitment(tx *btcutil.Tx, posData []byte) error {
 
 		return nil
 	} else if tx.MsgTx().PosCommitment.ProtectionLevel() == 1 {
+		if tx.MsgTx().PosCommitment.DataSize == 0 {
+			return ruleError(ErrMalformedPosCommitment, "commitment with protection level 1 should commit to data of length > 0")
+		}
 
 		if tx.MsgTx().PosCommitment.DataSize != uint32(dataLen) {
 			return ruleError(ErrMalformedPosCommitment, "length of data do not match commitment")
@@ -550,6 +547,8 @@ func checkBlockSanity(block *btcutil.Block, powLimit *big.Int, timeSource Median
 		}
 	}
 
+	currDataIdx := 0
+	dataLen := len(block.MsgBlock().PosData)
 	// Do some preliminary checks on each transaction to ensure they are
 	// sane before continuing.
 	for _, tx := range transactions {
@@ -557,6 +556,30 @@ func checkBlockSanity(block *btcutil.Block, powLimit *big.Int, timeSource Median
 		if err != nil {
 			return err
 		}
+
+		if tx.MsgTx().HasAttachedData() {
+			if currDataIdx >= dataLen {
+				return ruleError(ErrMalformedPosCommitment, "no data attached to transaction which requires it")
+			}
+
+			err = CheckTransactionCommitment(tx, block.MsgBlock().PosData[currDataIdx])
+
+			if err != nil {
+				return err
+			}
+
+			currDataIdx++
+
+		} else {
+			err = CheckTransactionCommitment(tx, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if currDataIdx != dataLen {
+		return ruleError(ErrMalformedPosCommitment, "to many data items attached")
 	}
 
 	// Build merkle tree and ensure the calculated merkle root matches the
