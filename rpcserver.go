@@ -3471,7 +3471,7 @@ func handleSendRawTransaction(s *rpcServer, cmd interface{}, closeChan <-chan st
 		}
 		posData = data
 	} else {
-		posData = make([]byte, 0)
+		posData = nil
 	}
 
 	// Use 0 for the tag to represent local node.

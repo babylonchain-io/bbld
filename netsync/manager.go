@@ -1454,12 +1454,25 @@ func (sm *SyncManager) handleBlockchainNotification(notification *blockchain.Not
 			break
 		}
 
+		var dataIdx int = 0
+
 		// Reinsert all of the transactions (except the coinbase) into
 		// the transaction pool.
 		for _, tx := range block.Transactions()[1:] {
-			// TODO BPC-29: Pass actual PosData received form another peer, For now passing
-			// empty slice
-			_, _, err := sm.txMemPool.MaybeAcceptTransaction(tx, []byte{},
+			var data []byte
+
+			if tx.MsgTx().HasAttachedData() {
+				// TODO-BABYLON this will panic if data is not there. For now this is ok,
+				// as it means that we have saved to db block which does not have enough
+				// data items to match transactions with non-zero commitments which is
+				// critical error
+				data = block.MsgBlock().PosData[dataIdx]
+				dataIdx++
+			} else {
+				data = nil
+			}
+
+			_, _, err := sm.txMemPool.MaybeAcceptTransaction(tx, data,
 				false, false)
 			if err != nil {
 				// Remove the transaction and all transactions

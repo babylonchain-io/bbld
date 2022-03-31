@@ -1876,10 +1876,10 @@ func TestTxCommitmentValidation(t *testing.T) {
 		data                              []byte
 		expectCommitmentValidationFailure bool
 	}{
-		// fail commitment validation due to nil data, we may rething it in the future
-		{&wire.Commitmment{}, nil, true},
-		// fail commitment validation due to nil data, we may rething it in the future
-		{nil, nil, true},
+		// valid commitment to empty data
+		{&wire.Commitmment{}, nil, false},
+		// no commitment, no data , everything is fine
+		{nil, nil, false},
 		// no commitment empty data, everything is fine
 		{nil, []byte{}, false},
 		// no commitment non empty data, fail validation
@@ -1894,8 +1894,10 @@ func TestTxCommitmentValidation(t *testing.T) {
 		{&wire.Commitmment{DataSize: 1}, []byte{}, true},
 		// commitment with zero protection level, zero data size, and non-empty data. invalid
 		{&wire.Commitmment{}, []byte{1}, true},
-		// valid protection level 1 commitment for empty data
-		{validCommitmentForData([]byte{}), []byte{}, false},
+		// invalid commitment due to protection level 1 and empty data
+		{validCommitmentForData([]byte{}), []byte{}, true},
+		// invalid commitment due to protection level 1 and empty data
+		{validCommitmentForData([]byte{}), nil, true},
 		// valid protection level 1 commitment for non empty data
 		{validCommitmentForData([]byte{1, 2, 3}), []byte{1, 2, 3}, false},
 		// data of different size, fail validation

@@ -556,7 +556,7 @@ func (sp *serverPeer) OnTx(_ *peer.Peer, msg *wire.MsgTx) {
 	// processed and known good or bad.  This helps prevent a malicious peer
 	// from queuing up a bunch of bad transactions before disconnecting (or
 	// being disconnected) and wasting memory.
-	sp.server.syncManager.QueueTx(tx, []byte{}, sp.Peer, sp.txProcessed)
+	sp.server.syncManager.QueueTx(tx, nil, sp.Peer, sp.txProcessed)
 	<-sp.txProcessed
 }
 
