@@ -308,7 +308,7 @@ type Commitmment struct {
 	Tag            [TagSize]uint8
 	verProt        uint8
 	DataSize       uint32
-	HashCommitment [chainhash.HashSize]uint8
+	HashCommitment chainhash.Hash
 	Nonce          uint32
 	PosSig         []uint8
 }
@@ -407,7 +407,7 @@ func NewTxCommitment(
 	version uint8,
 	protectionLevel uint8,
 	dataSize uint32,
-	hashCommitment [chainhash.HashSize]uint8,
+	hashCommitment chainhash.Hash,
 	nonce uint32,
 	signature []uint8) *Commitmment {
 

@@ -5,8 +5,6 @@
 package blockchain
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"math"
@@ -221,9 +219,9 @@ func CheckTransactionCommitment(tx *btcutil.Tx, posData []byte) error {
 			return ruleError(ErrMalformedPosCommitment, "data larger than maximum")
 		}
 
-		hash := sha256.Sum256(posData)
+		hash := chainhash.HashH(posData)
 
-		if !bytes.Equal(hash[:], tx.MsgTx().PosCommitment.HashCommitment[:]) {
+		if !hash.IsEqual(&tx.MsgTx().PosCommitment.HashCommitment) {
 			return ruleError(ErrMalformedPosCommitment, "hash of data do not match commitment")
 		}
 
