@@ -308,7 +308,7 @@ type Commitmment struct {
 	Tag            [TagSize]uint8
 	verProt        uint8
 	DataSize       uint32
-	HashCommitment [chainhash.HashSize]uint8
+	HashCommitment chainhash.Hash
 	Nonce          uint32
 	PosSig         []uint8
 }
