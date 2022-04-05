@@ -5,7 +5,6 @@
 package mempool
 
 import (
-	"crypto/sha256"
 	"encoding/hex"
 	"math/rand"
 	"reflect"
@@ -1858,7 +1857,7 @@ func validCommitmentForData(d []byte) *wire.Commitmment {
 	// we need protection level 1 to validate hashes
 	comm := wire.NewTxCommitmentVerProtLevel(0, 1)
 	comm.DataSize = uint32(len(d))
-	comm.HashCommitment = sha256.Sum256(d)
+	comm.HashCommitment = chainhash.HashH(d)
 	return comm
 }
 

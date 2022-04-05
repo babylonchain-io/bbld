@@ -407,7 +407,7 @@ func NewTxCommitment(
 	version uint8,
 	protectionLevel uint8,
 	dataSize uint32,
-	hashCommitment [chainhash.HashSize]uint8,
+	hashCommitment chainhash.Hash,
 	nonce uint32,
 	signature []uint8) *Commitmment {
 
