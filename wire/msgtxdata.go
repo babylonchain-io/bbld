@@ -1,6 +1,6 @@
 package wire
 
-// TODO decide on licensing
+// TODO-Babylon: decide on licensing
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func (msg *MsgTxData) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) e
 		return err
 	}
 
-	// TODO decide if we want to validate datasize against transaciton commitent here
+	// TODO-Babylon: decide if we want to validate datasize against transaciton commitent here
 	msg.Data, err = ReadVarBytes(r, pver, MaxPosDataSize, "txdata data")
 
 	return err
@@ -40,7 +40,7 @@ func (msg *MsgTxData) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) e
 		return err
 	}
 
-	// TODO decide if we want to validate datasize against transaciton commitent here
+	// TODO-Babylon: decide if we want to validate datasize against transaciton commitent here
 	return WriteVarBytes(w, pver, msg.Data)
 }
 
