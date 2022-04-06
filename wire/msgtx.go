@@ -305,7 +305,9 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 }
 
 // Commitment is a commitment submitted by a node in the PoS chain checkpointed
-// by Babylon.
+// by Babylon. Each transaction may contain a commitment (field `PosCommitment`
+// in `MsgTx`). The PoS chain will scan and verify checkpoints in Babylon, and
+// execute consensus according to these checkpoints.
 type Commitmment struct {
 	// Tag is a tag that allows PoS chains to search for its own commitment,
 	// e.g, a smart contract address of 20 bytes excluding the prefix. The
