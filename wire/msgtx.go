@@ -304,13 +304,55 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 	}
 }
 
+// Commitment is a commitment submitted by a node in the PoS chain checkpointed
+// by Babylon.
 type Commitmment struct {
-	Tag            [TagSize]uint8
-	verProt        uint8
-	DataSize       uint32
+	// Tag is a tag that allows PoS chains to search for its own commitment,
+	// e.g, a smart contract address of 20 bytes excluding the prefix. The
+	// content in Tag can be anything and bbld will not validate it. It is
+	// encoded in 32 bytes.
+	Tag [TagSize]uint8
+
+	// verProt is the protocol version of the Babylon commitment protocol. It
+	// is encoded in a byte.
+	// Currently verProt has two reserved values:
+	// - 0000: V1
+	// - 0001 ~ 1111: reserved
+	//
+	// Note that verProt >> 4 derives ProtectionLevel, which the protection
+	// level that a checkpoint provides. The protection level determines what
+	// data availability service the commitment asks Babylon to provide, and
+	// enables calculating transaction fee based on the storage time.
+	// ProtectionLevel has three reserved values:
+	// - 0000: The commitment contains hash only but no data. Babylon node will
+	// only check the hash,
+	// - 0001: The commitment contains hash and data. Babylon node will check
+	// the hash and store the data for a period of K blocks.
+	// - 0010 ~ 1111: reserved
+	verProt uint8
+
+	// DataSize is the size of the data in the commitment. It enables
+	// calculating and verifying transaction fee based on the data size. It is
+	// encoded in a byte. DataSize must be zero if ProtectionLevel = 0000.
+	DataSize uint32
+
+	// HashCommitment is the hash of a piece of data.
 	HashCommitment chainhash.Hash
-	Nonce          uint32
-	PosSig         []uint8
+
+	// Nonce is used for ordering.
+	// TODO-Babylon: finalise details
+	Nonce uint32
+
+	// PosSig is the signature of the serialised bytes of all fields above
+	// using the secret key of the submitter in the PoS chain. It allows the
+	// submitter to claim credit in the PoS chain, and helps the PoS chain
+	// identify the submitter of invalid commitments.
+	//
+	// Babylon node only checks whether PosSig is up to 128 bytes long, but
+	// DOES NOT verify this signature. Any commitment with a signature longer
+	// than 128 bytes is treated malicious and is discarded. PosSig can be
+	// zero-length, indicating that the submitter is anonymous.
+	PosSig []uint8
 }
 
 func (c *Commitmment) Version() uint8 {
