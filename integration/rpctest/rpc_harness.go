@@ -389,7 +389,13 @@ func (h *Harness) ConfirmedBalance() btcutil.Amount {
 func (h *Harness) SendOutputs(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount) (*chainhash.Hash, error) {
 
-	return h.wallet.SendOutputs(targetOutputs, feeRate)
+	return h.wallet.SendOutputs(targetOutputs, feeRate, nil)
+}
+
+func (h *Harness) SendOutputsWithCommitment(targetOutputs []*wire.TxOut,
+	feeRate btcutil.Amount, comm *wire.Commitmment) (*chainhash.Hash, error) {
+
+	return h.wallet.SendOutputs(targetOutputs, feeRate, comm)
 }
 
 // SendOutputsWithoutChange creates and sends a transaction that pays to the
@@ -400,7 +406,13 @@ func (h *Harness) SendOutputs(targetOutputs []*wire.TxOut,
 func (h *Harness) SendOutputsWithoutChange(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount) (*chainhash.Hash, error) {
 
-	return h.wallet.SendOutputsWithoutChange(targetOutputs, feeRate)
+	return h.wallet.SendOutputsWithoutChange(targetOutputs, feeRate, nil)
+}
+
+func (h *Harness) SendOutputsWithoutChangeWithCommitment(targetOutputs []*wire.TxOut,
+	feeRate btcutil.Amount, comm *wire.Commitmment) (*chainhash.Hash, error) {
+
+	return h.wallet.SendOutputsWithoutChange(targetOutputs, feeRate, comm)
 }
 
 // CreateTransaction returns a fully signed transaction paying to the specified
@@ -417,7 +429,14 @@ func (h *Harness) SendOutputsWithoutChange(targetOutputs []*wire.TxOut,
 func (h *Harness) CreateTransaction(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount, change bool) (*wire.MsgTx, error) {
 
-	return h.wallet.CreateTransaction(targetOutputs, feeRate, change)
+	return h.wallet.CreateTransaction(targetOutputs, feeRate, change, nil)
+}
+
+// This function is safe for concurrent access.
+func (h *Harness) CreateTransactionWithCommitment(targetOutputs []*wire.TxOut,
+	feeRate btcutil.Amount, change bool, comm *wire.Commitmment) (*wire.MsgTx, error) {
+
+	return h.wallet.CreateTransaction(targetOutputs, feeRate, change, comm)
 }
 
 // UnlockOutputs unlocks any outputs which were previously marked as
@@ -452,9 +471,9 @@ func (h *Harness) P2PAddress() string {
 // blockTime parameter if one doesn't wish to set a custom time.
 //
 // This function is safe for concurrent access.
-func (h *Harness) GenerateAndSubmitBlock(txns []*btcutil.Tx, blockVersion int32,
+func (h *Harness) GenerateAndSubmitBlock(txns []*btcutil.Tx, posData [][]byte, blockVersion int32,
 	blockTime time.Time) (*btcutil.Block, error) {
-	return h.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns,
+	return h.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns, posData,
 		blockVersion, blockTime, []wire.TxOut{})
 }
 
@@ -473,7 +492,7 @@ func (h *Harness) GenerateAndSubmitBlock(txns []*btcutil.Tx, blockVersion int32,
 //
 // This function is safe for concurrent access.
 func (h *Harness) GenerateAndSubmitBlockWithCustomCoinbaseOutputs(
-	txns []*btcutil.Tx, blockVersion int32, blockTime time.Time,
+	txns []*btcutil.Tx, posData [][]byte, blockVersion int32, blockTime time.Time,
 	mineTo []wire.TxOut) (*btcutil.Block, error) {
 
 	h.Lock()
@@ -495,7 +514,7 @@ func (h *Harness) GenerateAndSubmitBlockWithCustomCoinbaseOutputs(
 	prevBlock.SetHeight(prevBlockHeight)
 
 	// Create a new block including the specified transactions
-	newBlock, err := CreateBlock(prevBlock, txns, blockVersion,
+	newBlock, err := CreateBlock(prevBlock, txns, posData, blockVersion,
 		blockTime, h.wallet.coinbaseAddr, mineTo, h.ActiveNet)
 	if err != nil {
 		return nil, err

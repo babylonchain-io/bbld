@@ -179,7 +179,7 @@ func TestBIP0113Activation(t *testing.T) {
 	// However, since the block validation consensus rules haven't yet
 	// activated, a block including the transaction should be accepted.
 	txns := []*btcutil.Tx{btcutil.NewTx(tx)}
-	block, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+	block, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 	if err != nil {
 		t.Fatalf("unable to submit block: %v", err)
 	}
@@ -268,7 +268,7 @@ func TestBIP0113Activation(t *testing.T) {
 		}
 
 		txns = []*btcutil.Tx{btcutil.NewTx(tx)}
-		_, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+		_, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 		if err == nil && timeLockDelta >= 0 {
 			t.Fatal("block should be rejected due to non-final " +
 				"txn, but was accepted")
@@ -480,7 +480,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		// generated block as CSV validation for scripts within blocks
 		// shouldn't yet be active.
 		txns := []*btcutil.Tx{btcutil.NewTx(spendingTx)}
-		block, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+		block, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 		if err != nil {
 			t.Fatalf("unable to submit block: %v", err)
 		}
@@ -559,7 +559,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	}
 	for i := 0; i < relativeBlockLock; i++ {
 		timeStamp := prevBlock.Header.Timestamp.Add(time.Minute * 10)
-		b, err := r.GenerateAndSubmitBlock(nil, -1, timeStamp)
+		b, err := r.GenerateAndSubmitBlock(nil, nil, -1, timeStamp)
 		if err != nil {
 			t.Fatalf("unable to generate block: %v", err)
 		}
@@ -677,7 +677,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		// with the non-final transaction. It should be rejected.
 		if !test.accept {
 			txns := []*btcutil.Tx{btcutil.NewTx(test.tx)}
-			_, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+			_, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 			if err == nil {
 				t.Fatalf("test #%d, invalid block accepted", i)
 			}

@@ -1281,7 +1281,7 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendrawtransaction", "1122", &btcjson.AllowHighFeesOrMaxFeeRate{Value: btcjson.Int32(1234)})
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewBitcoindSendRawTransactionCmd("1122", 1234)
+				return btcjson.NewBitcoindSendRawTransactionCmd("1122", 1234, nil)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"sendrawtransaction","params":["1122",1234],"id":1}`,
 			unmarshalled: &btcjson.SendRawTransactionCmd{

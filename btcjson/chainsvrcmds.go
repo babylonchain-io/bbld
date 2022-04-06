@@ -908,12 +908,13 @@ func NewSendRawTransactionCmd(hexTx string, allowHighFees *bool, hexData *string
 // sendrawtransaction JSON-RPC command to a bitcoind node.
 //
 // A 0 maxFeeRate indicates that a maximum fee rate won't be enforced.
-func NewBitcoindSendRawTransactionCmd(hexTx string, maxFeeRate int32) *SendRawTransactionCmd {
+func NewBitcoindSendRawTransactionCmd(hexTx string, maxFeeRate int32, hexData *string) *SendRawTransactionCmd {
 	return &SendRawTransactionCmd{
 		HexTx: hexTx,
 		FeeSetting: &AllowHighFeesOrMaxFeeRate{
 			Value: &maxFeeRate,
 		},
+		HexData: hexData,
 	}
 }
 

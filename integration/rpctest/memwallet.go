@@ -451,9 +451,9 @@ func (m *memWallet) fundTx(tx *wire.MsgTx, amt btcutil.Amount,
 // while observing the passed fee rate. The passed fee rate should be expressed
 // in satoshis-per-byte.
 func (m *memWallet) SendOutputs(outputs []*wire.TxOut,
-	feeRate btcutil.Amount) (*chainhash.Hash, error) {
+	feeRate btcutil.Amount, commitment *wire.Commitmment) (*chainhash.Hash, error) {
 
-	tx, err := m.CreateTransaction(outputs, feeRate, true)
+	tx, err := m.CreateTransaction(outputs, feeRate, true, commitment)
 	if err != nil {
 		return nil, err
 	}
@@ -465,9 +465,9 @@ func (m *memWallet) SendOutputs(outputs []*wire.TxOut,
 // specified outputs while observing the passed fee rate and ignoring a change
 // output. The passed fee rate should be expressed in sat/b.
 func (m *memWallet) SendOutputsWithoutChange(outputs []*wire.TxOut,
-	feeRate btcutil.Amount) (*chainhash.Hash, error) {
+	feeRate btcutil.Amount, commitment *wire.Commitmment) (*chainhash.Hash, error) {
 
-	tx, err := m.CreateTransaction(outputs, feeRate, false)
+	tx, err := m.CreateTransaction(outputs, feeRate, false, commitment)
 	if err != nil {
 		return nil, err
 	}
@@ -482,12 +482,16 @@ func (m *memWallet) SendOutputsWithoutChange(outputs []*wire.TxOut,
 //
 // This function is safe for concurrent access.
 func (m *memWallet) CreateTransaction(outputs []*wire.TxOut,
-	feeRate btcutil.Amount, change bool) (*wire.MsgTx, error) {
+	feeRate btcutil.Amount, change bool, commitment *wire.Commitmment) (*wire.MsgTx, error) {
 
 	m.Lock()
 	defer m.Unlock()
 
 	tx := wire.NewMsgTx(wire.TxVersion)
+
+	if commitment != nil {
+		tx.PosCommitment = commitment
+	}
 
 	// Tally up the total amount to be sent in order to perform coin
 	// selection shortly below.

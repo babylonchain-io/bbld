@@ -446,6 +446,28 @@ func (c *Commitmment) SerializeSize() int {
 	return 73 + VarIntSerializeSize(uint64(len(c.PosSig))) + len(c.PosSig)
 }
 
+// Creates deep copy of the commitment
+func (c *Commitmment) Copy() *Commitmment {
+	newPosSig := make([]uint8, len(c.PosSig))
+	copy(newPosSig, c.PosSig[:])
+
+	newTag := [TagSize]uint8{}
+	copy(newTag[:], c.Tag[:])
+
+	newHash := [chainhash.HashSize]uint8{}
+	copy(newHash[:], c.HashCommitment[:])
+
+	commCopy := Commitmment{
+		Tag:            newTag,
+		verProt:        c.verProt,
+		DataSize:       c.DataSize,
+		HashCommitment: newHash,
+		Nonce:          c.Nonce,
+		PosSig:         newPosSig,
+	}
+	return &commCopy
+}
+
 func NewTxCommitment(
 	tag [TagSize]uint8,
 	version uint8,
@@ -603,6 +625,13 @@ func (msg *MsgTx) Copy() *MsgTx {
 		}
 		newTx.TxOut = append(newTx.TxOut, &newTxOut)
 	}
+
+	var commitment *Commitmment
+	if msg.PosCommitment != nil {
+		commitment = msg.PosCommitment.Copy()
+	}
+
+	newTx.PosCommitment = commitment
 
 	return &newTx
 }

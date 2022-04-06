@@ -351,7 +351,7 @@ func testGenerateAndSubmitBlock(r *Harness, t *testing.T) {
 
 	// Now generate a block with the default block version, and a zero'd
 	// out time.
-	block, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+	block, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -373,7 +373,7 @@ func testGenerateAndSubmitBlock(r *Harness, t *testing.T) {
 	// time stamp a minute after the previous block's timestamp.
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
-	block, err = r.GenerateAndSubmitBlock(nil, targetBlockVersion, timestamp)
+	block, err = r.GenerateAndSubmitBlock(nil, nil, targetBlockVersion, timestamp)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -418,7 +418,7 @@ func testGenerateAndSubmitBlockWithCustomCoinbaseOutputs(r *Harness,
 
 	// Now generate a block with the default block version, a zero'd out
 	// time, and a burn output.
-	block, err := r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns,
+	block, err := r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns, nil,
 		-1, time.Time{}, []wire.TxOut{{
 			Value:    0,
 			PkScript: []byte{},
@@ -444,7 +444,7 @@ func testGenerateAndSubmitBlockWithCustomCoinbaseOutputs(r *Harness,
 	// time stamp a minute after the previous block's timestamp.
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
-	block, err = r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(nil,
+	block, err = r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(nil, nil,
 		targetBlockVersion, timestamp, []wire.TxOut{{
 			Value:    0,
 			PkScript: []byte{},
