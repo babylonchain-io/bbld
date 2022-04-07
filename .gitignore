@@ -40,3 +40,9 @@ coverage.txt
 btcec/coverage.txt
 btcutil/coverage.txt
 btcutil/psbt/coverage.txt
+
+addblock
+bbld
+btcctl
+findcheckpoint
+gencerts
