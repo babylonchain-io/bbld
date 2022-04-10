@@ -489,9 +489,7 @@ func (m *memWallet) CreateTransaction(outputs []*wire.TxOut,
 
 	tx := wire.NewMsgTx(wire.TxVersion)
 
-	if commitment != nil {
-		tx.PosCommitment = commitment
-	}
+	tx.PosCommitment = commitment
 
 	// Tally up the total amount to be sent in order to perform coin
 	// selection shortly below.

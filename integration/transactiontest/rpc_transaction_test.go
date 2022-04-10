@@ -224,7 +224,7 @@ func testSendRawTransactionWithCommitment(r *rpctest.Harness, t *testing.T) {
 	// TODO-BABYLON It is a little bit hacky as we are re-using commitment created by
 	// createRawTx endpoint in creating transasction by memory wallet. Other alternative
 	// would be to pass coinbase output directly to signing code which also is not pretty.
-	testTx, err := r.CreateTransactionWithCommitment([]*wire.TxOut{output}, 10, true, rawTx.PosCommitment)
+	testTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, rawTx.PosCommitment)
 	if err != nil {
 		t.Fatalf("Cannot create tx with commitment: %v", err)
 	}
@@ -298,7 +298,7 @@ func testSendRawTransactionWithCommitment(r *rpctest.Harness, t *testing.T) {
 	}
 }
 
-// Check that transactionw with commitment and data is properly propagated
+// Check that transaction with commitment and data is properly propagated
 // and then introduced into block
 func testPropagateTxWithData(r *rpctest.Harness, t *testing.T) {
 	// Create a second harness with only the genesis block so it is behind
@@ -324,16 +324,16 @@ func testPropagateTxWithData(r *rpctest.Harness, t *testing.T) {
 		t.Fatalf("unable to join node on blocks: %v", err)
 	}
 
-	mainHarnessBestHash, _, e := r.Client.GetBestBlock()
+	mainHarnessBestHash, _, err := r.Client.GetBestBlock()
 
-	if e != nil {
-		t.Fatal("Cannot get main node best block")
+	if err != nil {
+		t.Fatalf("Cannot get main node best block: %v", err)
 	}
 
-	secondHarnessBestHash, _, e := harness.Client.GetBestBlock()
+	secondHarnessBestHash, _, err := harness.Client.GetBestBlock()
 
-	if e != nil {
-		t.Fatal("Cannot get main node best block")
+	if err != nil {
+		t.Fatalf("Cannot get client node best block: %v", err)
 	}
 
 	if !mainHarnessBestHash.IsEqual(secondHarnessBestHash) {
@@ -362,7 +362,7 @@ func testPropagateTxWithData(r *rpctest.Harness, t *testing.T) {
 	sig := generateRadomBytes(64)
 	comm := wire.NewTxCommitment(tag, 0, 1, uint32(len(data)), dataHash, 0, sig)
 
-	testTx, err := r.CreateTransactionWithCommitment([]*wire.TxOut{output}, 10, true, comm)
+	testTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, comm)
 	if err != nil {
 		t.Fatalf("Cannot create tx with commitment: %v", err)
 	}
@@ -445,10 +445,9 @@ func testPropagateTxWithData(r *rpctest.Harness, t *testing.T) {
 		t.Fatal("Client best block does not have expected data")
 	}
 
-	if !bytes.Equal(clientBestBlockCommitment.HashCommitment[:], comm.HashCommitment[:]) {
+	if !clientBestBlockCommitment.HashCommitment.IsEqual(&comm.HashCommitment) {
 		t.Fatal("Client best block does not have expected commitment")
 	}
-
 }
 
 var rpcTestCases = []rpctest.HarnessTestCase{

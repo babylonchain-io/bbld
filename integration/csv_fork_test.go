@@ -54,7 +54,7 @@ func makeTestOutput(r *rpctest.Harness, t *testing.T,
 	output := &wire.TxOut{PkScript: selfAddrScript, Value: 1e8}
 
 	// Next, create and broadcast a transaction paying to the output.
-	fundTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+	fundTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -317,7 +317,7 @@ func createCSVOutput(r *rpctest.Harness, t *testing.T,
 
 	// Finally create a valid transaction which creates the output crafted
 	// above.
-	tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+	tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 	if err != nil {
 		return nil, nil, nil, err
 	}

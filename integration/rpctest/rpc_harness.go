@@ -387,12 +387,6 @@ func (h *Harness) ConfirmedBalance() btcutil.Amount {
 //
 // This function is safe for concurrent access.
 func (h *Harness) SendOutputs(targetOutputs []*wire.TxOut,
-	feeRate btcutil.Amount) (*chainhash.Hash, error) {
-
-	return h.wallet.SendOutputs(targetOutputs, feeRate, nil)
-}
-
-func (h *Harness) SendOutputsWithCommitment(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount, comm *wire.Commitmment) (*chainhash.Hash, error) {
 
 	return h.wallet.SendOutputs(targetOutputs, feeRate, comm)
@@ -404,12 +398,6 @@ func (h *Harness) SendOutputsWithCommitment(targetOutputs []*wire.TxOut,
 //
 // This function is safe for concurrent access.
 func (h *Harness) SendOutputsWithoutChange(targetOutputs []*wire.TxOut,
-	feeRate btcutil.Amount) (*chainhash.Hash, error) {
-
-	return h.wallet.SendOutputsWithoutChange(targetOutputs, feeRate, nil)
-}
-
-func (h *Harness) SendOutputsWithoutChangeWithCommitment(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount, comm *wire.Commitmment) (*chainhash.Hash, error) {
 
 	return h.wallet.SendOutputsWithoutChange(targetOutputs, feeRate, comm)
@@ -427,13 +415,6 @@ func (h *Harness) SendOutputsWithoutChangeWithCommitment(targetOutputs []*wire.T
 //
 // This function is safe for concurrent access.
 func (h *Harness) CreateTransaction(targetOutputs []*wire.TxOut,
-	feeRate btcutil.Amount, change bool) (*wire.MsgTx, error) {
-
-	return h.wallet.CreateTransaction(targetOutputs, feeRate, change, nil)
-}
-
-// This function is safe for concurrent access.
-func (h *Harness) CreateTransactionWithCommitment(targetOutputs []*wire.TxOut,
 	feeRate btcutil.Amount, change bool, comm *wire.Commitmment) (*wire.MsgTx, error) {
 
 	return h.wallet.CreateTransaction(targetOutputs, feeRate, change, comm)
