@@ -2268,17 +2268,9 @@ func newPeerBase(origCfg *Config, inbound bool) *Peer {
 	}
 
 	// Determine if the peer would like to receive witness data with
-	// transactions, or not.
+	// transactions and suppoprt WitnessEncoding.
 	if cfg.Services&wire.SFNodeWitness == wire.SFNodeWitness {
 		p.witnessEnabled = true
-	}
-
-	// Once the version message has been exchanged, we're able to determine
-	// if this peer knows how to encode witness data over the wire
-	// protocol. If so, then we'll switch to a decoding mode which is
-	// prepared for the new transaction format introduced as part of
-	// BIP0144.
-	if cfg.Services&wire.SFNodeWitness == wire.SFNodeWitness {
 		p.wireEncoding = wire.WitnessEncoding
 	}
 

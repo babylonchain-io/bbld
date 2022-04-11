@@ -456,8 +456,9 @@ func TestPeerListeners(t *testing.T) {
 		UserAgentComments: []string{"comment"},
 		ChainParams:       &chaincfg.MainNetParams,
 		Services:          wire.SFNodeBloom,
-		TrickleInterval:   time.Second * 10,
-		AllowSelfConns:    true,
+		// Services:        wire.SFNodeBloom | wire.SFNodeNetwork | wire.SFNodeWitness, // TODO (RH)
+		TrickleInterval: time.Second * 10,
+		AllowSelfConns:  true,
 	}
 	inConn, outConn := pipe(
 		&conn{raddr: "10.0.0.1:8333"},
