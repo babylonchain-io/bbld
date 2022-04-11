@@ -560,7 +560,7 @@ func decodeCommitment(p *btcjson.PosDataInput) (*wire.Commitmment, error) {
 	if p.ProtectionLevel == 0 {
 		// if protection level is zero, then field HashOrData should be and
 		// hash of some data and data size will be equal to 0
-		if len(hashOrData) > chainhash.HashSize {
+		if len(hashOrData) != chainhash.HashSize {
 			return nil, &btcjson.RPCError{
 				Code:    btcjson.ErrRPCInvalidParameter,
 				Message: "With 0 protection level, HashOrData should represent 32 byte hash",

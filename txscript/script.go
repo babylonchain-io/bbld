@@ -484,10 +484,11 @@ func shallowCopyTx(tx *wire.MsgTx) wire.MsgTx {
 	// pointers into the contiguous arrays.  This avoids a lot of small
 	// allocations.
 	txCopy := wire.MsgTx{
-		Version:  tx.Version,
-		TxIn:     make([]*wire.TxIn, len(tx.TxIn)),
-		TxOut:    make([]*wire.TxOut, len(tx.TxOut)),
-		LockTime: tx.LockTime,
+		Version:       tx.Version,
+		TxIn:          make([]*wire.TxIn, len(tx.TxIn)),
+		TxOut:         make([]*wire.TxOut, len(tx.TxOut)),
+		LockTime:      tx.LockTime,
+		PosCommitment: tx.PosCommitment,
 	}
 	txIns := make([]wire.TxIn, len(tx.TxIn))
 	for i, oldTxIn := range tx.TxIn {

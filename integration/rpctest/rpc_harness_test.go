@@ -36,7 +36,7 @@ func testSendOutputs(r *Harness, t *testing.T) {
 			t.Fatalf("unable to generate pkscript to addr: %v", err)
 		}
 		output := wire.NewTxOut(int64(amt), addrScript)
-		txid, err := r.SendOutputs([]*wire.TxOut{output}, 10)
+		txid, err := r.SendOutputs([]*wire.TxOut{output}, 10, nil)
 		if err != nil {
 			t.Fatalf("coinbase spend failed: %v", err)
 		}
@@ -207,7 +207,7 @@ func testJoinMempools(r *Harness, t *testing.T) {
 		t.Fatalf("unable to generate pkscript to addr: %v", err)
 	}
 	output := wire.NewTxOut(5e8, addrScript)
-	testTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+	testTx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 	if err != nil {
 		t.Fatalf("coinbase spend failed: %v", err)
 	}
@@ -341,7 +341,7 @@ func testGenerateAndSubmitBlock(r *Harness, t *testing.T) {
 	const numTxns = 5
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
-		tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+		tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 		if err != nil {
 			t.Fatalf("unable to create tx: %v", err)
 		}
@@ -351,7 +351,7 @@ func testGenerateAndSubmitBlock(r *Harness, t *testing.T) {
 
 	// Now generate a block with the default block version, and a zero'd
 	// out time.
-	block, err := r.GenerateAndSubmitBlock(txns, -1, time.Time{})
+	block, err := r.GenerateAndSubmitBlock(txns, nil, -1, time.Time{})
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -373,7 +373,7 @@ func testGenerateAndSubmitBlock(r *Harness, t *testing.T) {
 	// time stamp a minute after the previous block's timestamp.
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
-	block, err = r.GenerateAndSubmitBlock(nil, targetBlockVersion, timestamp)
+	block, err = r.GenerateAndSubmitBlock(nil, nil, targetBlockVersion, timestamp)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -408,7 +408,7 @@ func testGenerateAndSubmitBlockWithCustomCoinbaseOutputs(r *Harness,
 	const numTxns = 5
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
-		tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+		tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 		if err != nil {
 			t.Fatalf("unable to create tx: %v", err)
 		}
@@ -418,7 +418,7 @@ func testGenerateAndSubmitBlockWithCustomCoinbaseOutputs(r *Harness,
 
 	// Now generate a block with the default block version, a zero'd out
 	// time, and a burn output.
-	block, err := r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns,
+	block, err := r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(txns, nil,
 		-1, time.Time{}, []wire.TxOut{{
 			Value:    0,
 			PkScript: []byte{},
@@ -444,7 +444,7 @@ func testGenerateAndSubmitBlockWithCustomCoinbaseOutputs(r *Harness,
 	// time stamp a minute after the previous block's timestamp.
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
-	block, err = r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(nil,
+	block, err = r.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(nil, nil,
 		targetBlockVersion, timestamp, []wire.TxOut{{
 			Value:    0,
 			PkScript: []byte{},
@@ -523,7 +523,7 @@ func testMemWalletLockedOutputs(r *Harness, t *testing.T) {
 	}
 	outputAmt := btcutil.Amount(50 * btcutil.SatoshiPerBitcoin)
 	output := wire.NewTxOut(int64(outputAmt), pkScript)
-	tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true)
+	tx, err := r.CreateTransaction([]*wire.TxOut{output}, 10, true, nil)
 	if err != nil {
 		t.Fatalf("unable to create transaction: %v", err)
 	}
