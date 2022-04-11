@@ -117,7 +117,7 @@ type MessageListeners struct {
 	// OnTx is invoked when a peer receives a tx bitcoin message.
 	OnTx func(p *Peer, msg *wire.MsgTx)
 
-	// OnTx is invoked when a peer receives a txdata babylon message.
+	// OnTxData is invoked when a peer receives a txdata babylon message.
 	OnTxData func(p *Peer, msg *wire.MsgTxData)
 
 	// OnBlock is invoked when a peer receives a block bitcoin message.

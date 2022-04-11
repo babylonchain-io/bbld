@@ -560,11 +560,11 @@ func (sp *serverPeer) OnTx(_ *peer.Peer, msg *wire.MsgTx) {
 	<-sp.txProcessed
 }
 
-// OnTx is invoked when a peer receives a tx wit data babylon message.  It blocks
+// OnTxData is invoked when a peer receives a tx wit data babylon message.  It blocks
 // until the babylon transaction and data have been fully processed.  Unlock the block
 // handler this does not serialize all transactions through a single thread
 // transactions don't rely on the previous one in a linear fashion like blocks.
-func (sp *serverPeer) OnTxWithData(_ *peer.Peer, msg *wire.MsgTxData) {
+func (sp *serverPeer) OnTxData(_ *peer.Peer, msg *wire.MsgTxData) {
 	if cfg.BlocksOnly {
 		peerLog.Tracef("Ignoring tx %v from %v - blocksonly enabled",
 			msg.Tx.TxHash(), sp)
@@ -585,6 +585,8 @@ func (sp *serverPeer) OnTxWithData(_ *peer.Peer, msg *wire.MsgTxData) {
 	// being disconnected) and wasting memory.
 	sp.server.syncManager.QueueTx(tx, msg.Data, sp.Peer, sp.txProcessed)
 	<-sp.txProcessed
+
+	// TODO-Babylon: add logic on processing msg.Data?
 }
 
 // OnBlock is invoked when a peer receives a block bitcoin message.  It
@@ -2054,7 +2056,7 @@ func newPeerConfig(sp *serverPeer) *peer.Config {
 			OnVerAck:       sp.OnVerAck,
 			OnMemPool:      sp.OnMemPool,
 			OnTx:           sp.OnTx,
-			OnTxData:       sp.OnTxWithData,
+			OnTxData:       sp.OnTxData,
 			OnBlock:        sp.OnBlock,
 			OnInv:          sp.OnInv,
 			OnHeaders:      sp.OnHeaders,
