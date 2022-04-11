@@ -802,12 +802,8 @@ func (f *FundRawTransactionResult) UnmarshalJSON(data []byte) error {
 	}
 
 	var msgTx wire.MsgTx
-	witnessErr := msgTx.Deserialize(bytes.NewReader(txBytes))
-	if witnessErr != nil {
-		legacyErr := msgTx.DeserializeNoWitness(bytes.NewReader(txBytes))
-		if legacyErr != nil {
-			return legacyErr
-		}
+	if err := msgTx.Deserialize(bytes.NewReader(txBytes)); err != nil {
+		return err
 	}
 
 	fee, err := btcutil.NewAmount(rawRes.Fee)

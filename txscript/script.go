@@ -604,7 +604,7 @@ func calcSignatureHash(sigScript []byte, hashType SigHashType, tx *wire.MsgTx, i
 	// transaction and the hash type (encoded as a 4-byte little-endian
 	// value) appended.
 	wbuf := bytes.NewBuffer(make([]byte, 0, txCopy.SerializeSizeStripped()+4))
-	txCopy.SerializeNoWitness(wbuf)
+	txCopy.Serialize(wbuf)
 	binary.Write(wbuf, binary.LittleEndian, hashType)
 	return chainhash.DoubleHashB(wbuf.Bytes())
 }
