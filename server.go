@@ -536,7 +536,7 @@ func (sp *serverPeer) OnMemPool(_ *peer.Peer, msg *wire.MsgMemPool) {
 // until the bitcoin transaction has been fully processed.  Unlock the block
 // handler this does not serialize all transactions through a single thread
 // transactions don't rely on the previous one in a linear fashion like blocks.
-// TODO: after babylon modification it is not used, so consider removing it
+// TODO-Babylon: after babylon modification it is not used, so consider removing it
 func (sp *serverPeer) OnTx(_ *peer.Peer, msg *wire.MsgTx) {
 	if cfg.BlocksOnly {
 		peerLog.Tracef("Ignoring tx %v from %v - blocksonly enabled",

@@ -264,7 +264,7 @@ func TestPeerConnection(t *testing.T) {
 		wantTimeOffset:      int64(0),
 		wantBytesSent:       167, // 143 version + 24 verack
 		wantBytesReceived:   167,
-		wantWitnessEnabled:  false,
+		wantWitnessEnabled:  true,
 	}
 	wantStats2 := peerStats{
 		wantUserAgent:       wire.DefaultUserAgent + "peer:1.0(comment)/",

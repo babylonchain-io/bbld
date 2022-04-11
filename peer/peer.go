@@ -1826,7 +1826,7 @@ out:
 //
 // This function is safe for concurrent access.
 func (p *Peer) QueueMessage(msg wire.Message, doneChan chan<- struct{}) {
-	p.QueueMessageWithEncoding(msg, doneChan, wire.BaseEncoding)
+	p.QueueMessageWithEncoding(msg, doneChan, wire.WitnessEncoding)
 }
 
 // QueueMessageWithEncoding adds the passed bitcoin message to the peer send
@@ -2266,6 +2266,22 @@ func newPeerBase(origCfg *Config, inbound bool) *Peer {
 		services:        cfg.Services,
 		protocolVersion: cfg.ProtocolVersion,
 	}
+
+	// Determine if the peer would like to receive witness data with
+	// transactions, or not.
+	if cfg.Services&wire.SFNodeWitness == wire.SFNodeWitness {
+		p.witnessEnabled = true
+	}
+
+	// Once the version message has been exchanged, we're able to determine
+	// if this peer knows how to encode witness data over the wire
+	// protocol. If so, then we'll switch to a decoding mode which is
+	// prepared for the new transaction format introduced as part of
+	// BIP0144.
+	if cfg.Services&wire.SFNodeWitness == wire.SFNodeWitness {
+		p.wireEncoding = wire.WitnessEncoding
+	}
+
 	return &p
 }
 
