@@ -1826,7 +1826,7 @@ out:
 //
 // This function is safe for concurrent access.
 func (p *Peer) QueueMessage(msg wire.Message, doneChan chan<- struct{}) {
-	p.QueueMessageWithEncoding(msg, doneChan, wire.WitnessEncoding)
+	p.QueueMessageWithEncoding(msg, doneChan, p.wireEncoding)
 }
 
 // QueueMessageWithEncoding adds the passed bitcoin message to the peer send
