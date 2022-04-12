@@ -433,29 +433,37 @@ func TestTxWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
+		// Force error in flag.
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 4, io.ErrShortWrite, io.EOF},
 		// Force error in number of transaction inputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 6, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input previous block hash.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 7, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input previous block output index.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 37, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 39, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input signature script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 41, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 43, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input signature script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 42, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 44, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input sequence.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 49, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 48, io.ErrShortWrite, io.EOF},
 		// Force error in number of transaction outputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 53, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 49, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output value.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 54, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 57, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output pk script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 62, io.ErrShortWrite, io.EOF},
-		// Force error in transaction output pk script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 63, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 58, io.ErrShortWrite, io.EOF},
+		// Force error in Version 0 witness program + OP_DATA_20 + pk hash.
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 80, io.ErrShortWrite, io.EOF},
+		// Force error in stack size.
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 81, io.ErrShortWrite, io.EOF},
+		// Force error in stack item #1 size + content.
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 152, io.ErrShortWrite, io.EOF},
+		// Force error in stack item #2 size + content.
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 186, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output lock time.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 206, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 190, io.ErrShortWrite, io.EOF},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -464,8 +472,8 @@ func TestTxWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		err := test.in.BtcEncode(w, test.pver, test.enc)
 		if err != test.writeErr {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
-				i, err, test.writeErr)
+			t.Errorf("BtcEncode #%d (with max=%d) wrong error got: %v, want: %v",
+				i, test.max, err, test.writeErr)
 			continue
 		}
 
@@ -474,8 +482,8 @@ func TestTxWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		err = msg.BtcDecode(r, test.pver, test.enc)
 		if err != test.readErr {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
-				i, err, test.readErr)
+			t.Errorf("BtcEncode #%d (with max=%d) wrong error got: %v, want: %v",
+				i, test.max, err, test.writeErr)
 			continue
 		}
 	}
