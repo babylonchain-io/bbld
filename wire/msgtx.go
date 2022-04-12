@@ -817,21 +817,17 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	// number of elements in lists || elem1 || elem2 || ..
 	// but here list can have length either 0 or 1
 	hasCommitment, err := ReadBool(r)
-
 	if err != nil {
+		returnScriptBuffers()
 		return err
 	}
 
 	if hasCommitment {
 		var c Commitmment
-
-		err = c.ReadCommitment(r, pver)
-
-		if err != nil {
+		if err := c.ReadCommitment(r, pver); err != nil {
 			returnScriptBuffers()
 			return err
 		}
-
 		msg.PosCommitment = &c
 	} else {
 		msg.PosCommitment = nil
