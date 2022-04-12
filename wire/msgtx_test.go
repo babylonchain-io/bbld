@@ -922,17 +922,14 @@ func TestTxWithCommitmentSerialization(t *testing.T) {
 		}
 
 		var buf bytes.Buffer
-		err := test.in.BtcEncode(&buf, 0, BaseEncoding)
-		if err != nil {
+		if err := test.in.BtcEncode(&buf, 0, BaseEncoding); err != nil {
 			t.Errorf("BtcEncode tx with commitment #%d error %v", i, err)
 			continue
 		}
 
 		var msgTx MsgTx
 		rbuf := bytes.NewReader(buf.Bytes())
-		err = msgTx.BtcDecode(rbuf, 0, BaseEncoding)
-
-		if err != nil {
+		if err := msgTx.BtcDecode(rbuf, 0, BaseEncoding); err != nil {
 			t.Errorf("BtcDecode tx with commitment #%d error %v", i, err)
 			continue
 		}
