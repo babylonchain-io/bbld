@@ -766,9 +766,9 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 		totalScriptSize += uint64(len(to.PkScript))
 	}
 
-	// If the transaction's flag byte isn't 0x00 at this point, then one or
+	// If the transaction's flag byte equals to WitnessFlag, then one or
 	// more of its inputs has accompanying witness data.
-	if flag[0] != 0 && enc == WitnessEncoding {
+	if flag[0] == WitnessFlag && enc == WitnessEncoding {
 		for _, txin := range msg.TxIn {
 			// For each input, the witness is encoded as a stack
 			// with one or more items. Therefore, we first read a

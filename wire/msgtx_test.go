@@ -278,8 +278,7 @@ func TestTxWire(t *testing.T) {
 	}
 	// noTxWitnessEncoded := []byte{
 	// 	0x01, 0x00, 0x00, 0x00, // Version
-	// 	0x00,                   // Marker
-	// 	0x01,                   // Flag
+	// 	0x00, 0x01              // Marker and flag
 	// 	0x00,                   // Varint for number of input transactions
 	// 	0x00,                   // Varint for number of output transactions
 	// 	0x00, 0x00, 0x00, 0x00, // Lock time
