@@ -133,7 +133,7 @@ func createCoinbaseTx(coinbaseScript []byte, nextBlockHeight int32,
 // initialized), then the timestamp of the previous block will be used plus 1
 // second is used. Passing nil for the previous block results in a block that
 // builds off of the genesis block for the specified chain.
-func CreateBlock(prevBlock *btcutil.Block, inclusionTxs []*btcutil.Tx,
+func CreateBlock(prevBlock *btcutil.Block, inclusionTxs []*btcutil.Tx, inclusionData [][]byte,
 	blockVersion int32, blockTime time.Time, miningAddr btcutil.Address,
 	mineTo []wire.TxOut, net *chaincfg.Params) (*btcutil.Block, error) {
 
@@ -208,6 +208,12 @@ func CreateBlock(prevBlock *btcutil.Block, inclusionTxs []*btcutil.Tx,
 	}
 	for _, tx := range blockTxns {
 		if err := block.AddTransaction(tx.MsgTx()); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, data := range inclusionData {
+		if err := block.AddData(data); err != nil {
 			return nil, err
 		}
 	}

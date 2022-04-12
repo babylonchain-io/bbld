@@ -287,14 +287,14 @@ func (r FutureCreateRawTransactionResult) Receive() (*wire.MsgTx, error) {
 //
 // See CreateRawTransaction for the blocking version and more details.
 func (c *Client) CreateRawTransactionAsync(inputs []btcjson.TransactionInput,
-	amounts map[btcutil.Address]btcutil.Amount, lockTime *int64) FutureCreateRawTransactionResult {
+	amounts map[btcutil.Address]btcutil.Amount, lockTime *int64, posDataInput *btcjson.PosDataInput) FutureCreateRawTransactionResult {
 
 	convertedAmts := make(map[string]float64, len(amounts))
 	for addr, amount := range amounts {
 		convertedAmts[addr.String()] = amount.ToBTC()
 	}
 	// TODO-Babylon: Update to pass also commitment data
-	cmd := btcjson.NewCreateRawTransactionCmd(inputs, convertedAmts, lockTime, nil)
+	cmd := btcjson.NewCreateRawTransactionCmd(inputs, convertedAmts, lockTime, posDataInput)
 	return c.SendCmd(cmd)
 }
 
@@ -302,9 +302,9 @@ func (c *Client) CreateRawTransactionAsync(inputs []btcjson.TransactionInput,
 // and sending to the provided addresses. If the inputs are either nil or an
 // empty slice, it is interpreted as an empty slice.
 func (c *Client) CreateRawTransaction(inputs []btcjson.TransactionInput,
-	amounts map[btcutil.Address]btcutil.Amount, lockTime *int64) (*wire.MsgTx, error) {
+	amounts map[btcutil.Address]btcutil.Amount, lockTime *int64, posDataInput *btcjson.PosDataInput) (*wire.MsgTx, error) {
 
-	return c.CreateRawTransactionAsync(inputs, amounts, lockTime).Receive()
+	return c.CreateRawTransactionAsync(inputs, amounts, lockTime, posDataInput).Receive()
 }
 
 // FutureSendRawTransactionResult is a future promise to deliver the result
@@ -335,7 +335,7 @@ func (r FutureSendRawTransactionResult) Receive() (*chainhash.Hash, error) {
 // the returned instance.
 //
 // See SendRawTransaction for the blocking version and more details.
-func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) FutureSendRawTransactionResult {
+func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool, posData *string) FutureSendRawTransactionResult {
 	txHex := ""
 	if tx != nil {
 		// Serialize the transaction and convert to hex string.
@@ -364,12 +364,12 @@ func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) Fut
 		if !allowHighFees {
 			maxFeeRate = defaultMaxFeeRate
 		}
-		cmd = btcjson.NewBitcoindSendRawTransactionCmd(txHex, maxFeeRate)
+		cmd = btcjson.NewBitcoindSendRawTransactionCmd(txHex, maxFeeRate, posData)
 
 	// Otherwise, use the AllowHighFees field.
 	default:
 		// TODO-Babylon: Update to pass also commitment data
-		cmd = btcjson.NewSendRawTransactionCmd(txHex, &allowHighFees, nil)
+		cmd = btcjson.NewSendRawTransactionCmd(txHex, &allowHighFees, posData)
 	}
 
 	return c.SendCmd(cmd)
@@ -378,7 +378,13 @@ func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) Fut
 // SendRawTransaction submits the encoded transaction to the server which will
 // then relay it to the network.
 func (c *Client) SendRawTransaction(tx *wire.MsgTx, allowHighFees bool) (*chainhash.Hash, error) {
-	return c.SendRawTransactionAsync(tx, allowHighFees).Receive()
+	return c.SendRawTransactionAsync(tx, allowHighFees, nil).Receive()
+}
+
+// SendRawTransaction submits the encoded transaction to the server which will
+// then relay it to the network.
+func (c *Client) SendRawTransactionWithData(tx *wire.MsgTx, allowHighFees bool, posData string) (*chainhash.Hash, error) {
+	return c.SendRawTransactionAsync(tx, allowHighFees, &posData).Receive()
 }
 
 // FutureSignRawTransactionResult is a future promise to deliver the result
