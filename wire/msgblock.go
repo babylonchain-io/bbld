@@ -188,7 +188,7 @@ func (msg *MsgBlock) Deserialize(r io.Reader) error {
 // Deserialize, however DeserializeWitness strips all (if any) witness data
 // from the transactions within the block before encoding them.
 func (msg *MsgBlock) DeserializeNoWitness(r io.Reader) error {
-	return msg.BtcDecode(r, 0, WitnessEncoding)
+	return msg.BtcDecode(r, 0, BaseEncoding)
 }
 
 // DeserializeTxLoc decodes r in the same manner Deserialize does, but it takes
@@ -333,7 +333,7 @@ func (msg *MsgBlock) Serialize(w io.Writer) error {
 // allow one to selectively encode transaction witness data to non-upgraded
 // peers which are unaware of the new encoding.
 func (msg *MsgBlock) SerializeNoWitness(w io.Writer) error {
-	return msg.BtcEncode(w, 0, WitnessEncoding)
+	return msg.BtcEncode(w, 0, BaseEncoding)
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the
