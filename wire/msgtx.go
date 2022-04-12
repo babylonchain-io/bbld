@@ -1014,33 +1014,6 @@ func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) error
 	}
 }
 
-// HasWitness returns false if none of the inputs within the transaction
-// contain witness data, true false otherwise.
-func (msg *MsgTx) HasWitness() bool {
-	for _, txIn := range msg.TxIn {
-		if len(txIn.Witness) != 0 {
-			return true
-		}
-	}
-
-	return false
-}
-
-// Returns true if tx has attached commitment to piece of data
-func (msg *MsgTx) HasPosCommitment() bool {
-	return msg.PosCommitment != nil
-}
-
-// Returns true if tx has attached commitment, and data size on commitment
-// is larger than zero.
-func (msg *MsgTx) HasAttachedData() bool {
-	if !msg.HasPosCommitment() {
-		return false
-	}
-
-	return msg.PosCommitment.DataSize > 0
-}
-
 // Serialize encodes the transaction to w using a format that suitable for
 // long-term storage such as a database while respecting the Version field in
 // the transaction.  This function differs from BtcEncode in that BtcEncode
@@ -1068,6 +1041,33 @@ func (msg *MsgTx) Serialize(w io.Writer) error {
 // data, the old serialization format will still be used.
 func (msg *MsgTx) SerializeNoWitness(w io.Writer) error {
 	return msg.BtcEncode(w, 0, BaseEncoding)
+}
+
+// HasWitness returns false if none of the inputs within the transaction
+// contain witness data, true false otherwise.
+func (msg *MsgTx) HasWitness() bool {
+	for _, txIn := range msg.TxIn {
+		if len(txIn.Witness) != 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Returns true if tx has attached commitment to piece of data
+func (msg *MsgTx) HasPosCommitment() bool {
+	return msg.PosCommitment != nil
+}
+
+// Returns true if tx has attached commitment, and data size on commitment
+// is larger than zero.
+func (msg *MsgTx) HasAttachedData() bool {
+	if !msg.HasPosCommitment() {
+		return false
+	}
+
+	return msg.PosCommitment.DataSize > 0
 }
 
 // baseSize returns the serialized size of the transaction without accounting
