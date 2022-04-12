@@ -35,7 +35,7 @@ func TestTxDataWire(t *testing.T) {
 
 		// Encode the message to wire format.
 		var buf bytes.Buffer
-		err := txWithData.BtcEncode(&buf, 0, BaseEncoding)
+		err := txWithData.BtcEncode(&buf, 0, WitnessEncoding)
 		if err != nil {
 			t.Errorf("BtcEncode #%d error %v", i, err)
 			continue
@@ -44,7 +44,7 @@ func TestTxDataWire(t *testing.T) {
 		// Decode the message from wire format.
 		var msg MsgTxData
 		rbuf := bytes.NewReader(buf.Bytes())
-		err = msg.BtcDecode(rbuf, 0, BaseEncoding)
+		err = msg.BtcDecode(rbuf, 0, WitnessEncoding)
 		if err != nil {
 			t.Errorf("BtcDecode #%d error %v", i, err)
 			continue
@@ -71,7 +71,7 @@ func TestTxDataWireTooLargeData(t *testing.T) {
 
 	var msg MsgTxData
 	rbuf := bytes.NewReader(noTxEncoded)
-	err := msg.BtcDecode(rbuf, 0, BaseEncoding)
+	err := msg.BtcDecode(rbuf, 0, WitnessEncoding)
 
 	var expectedError = &MessageError{}
 
