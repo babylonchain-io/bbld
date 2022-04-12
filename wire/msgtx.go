@@ -647,7 +647,7 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	}
 	msg.Version = int32(version)
 
-	count, err := ReadVarInt(r, pver)
+	numTxIn, err := ReadVarInt(r, pver)
 	if err != nil {
 		return err
 	}
@@ -655,7 +655,7 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	// A count of zero (meaning no TxIn's to the uninitiated) means that the
 	// value is a TxFlagMarker, and hence indicates the presence of a flag.
 	var flag [1]TxFlag
-	if count == TxFlagMarker && enc == WitnessEncoding {
+	if numTxIn == TxFlagMarker && enc == WitnessEncoding {
 		// The count varint was in fact the flag marker byte. Next, we need to
 		// read the flag value, which is a single byte.
 		if _, err = io.ReadFull(r, flag[:]); err != nil {
@@ -671,7 +671,7 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 
 		// With the Segregated Witness specific fields decoded, we can
 		// now read in the actual txin count.
-		count, err = ReadVarInt(r, pver)
+		numTxIn, err = ReadVarInt(r, pver)
 		if err != nil {
 			return err
 		}
@@ -680,9 +680,9 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	// Prevent more input transactions than could possibly fit into a
 	// message.  It would be possible to cause memory exhaustion and panics
 	// without a sane upper bound on this count.
-	if count > uint64(maxTxInPerMessage) {
+	if numTxIn > uint64(maxTxInPerMessage) {
 		str := fmt.Sprintf("too many input transactions to fit into "+
-			"max message size [count %d, max %d]", count,
+			"max message size [count %d, max %d]", numTxIn,
 			maxTxInPerMessage)
 		return messageError("MsgTx.BtcDecode", str)
 	}
@@ -718,9 +718,9 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 
 	// Deserialize the inputs.
 	var totalScriptSize uint64
-	txIns := make([]TxIn, count)
-	msg.TxIn = make([]*TxIn, count)
-	for i := uint64(0); i < count; i++ {
+	txIns := make([]TxIn, numTxIn)
+	msg.TxIn = make([]*TxIn, numTxIn)
+	for i := uint64(0); i < numTxIn; i++ {
 		// The pointer is set now in case a script buffer is borrowed
 		// and needs to be returned to the pool on error.
 		ti := &txIns[i]
@@ -733,7 +733,7 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 		totalScriptSize += uint64(len(ti.SignatureScript))
 	}
 
-	count, err = ReadVarInt(r, pver)
+	numTxOut, err := ReadVarInt(r, pver)
 	if err != nil {
 		returnScriptBuffers()
 		return err
@@ -742,18 +742,18 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	// Prevent more output transactions than could possibly fit into a
 	// message.  It would be possible to cause memory exhaustion and panics
 	// without a sane upper bound on this count.
-	if count > uint64(maxTxOutPerMessage) {
+	if numTxOut > uint64(maxTxOutPerMessage) {
 		returnScriptBuffers()
 		str := fmt.Sprintf("too many output transactions to fit into "+
-			"max message size [count %d, max %d]", count,
+			"max message size [count %d, max %d]", numTxOut,
 			maxTxOutPerMessage)
 		return messageError("MsgTx.BtcDecode", str)
 	}
 
 	// Deserialize the outputs.
-	txOuts := make([]TxOut, count)
-	msg.TxOut = make([]*TxOut, count)
-	for i := uint64(0); i < count; i++ {
+	txOuts := make([]TxOut, numTxOut)
+	msg.TxOut = make([]*TxOut, numTxOut)
+	for i := uint64(0); i < numTxOut; i++ {
 		// The pointer is set now in case a script buffer is borrowed
 		// and needs to be returned to the pool on error.
 		to := &txOuts[i]
