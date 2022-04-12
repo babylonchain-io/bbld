@@ -302,13 +302,13 @@ func TestTxWire(t *testing.T) {
 			BaseEncoding,
 		},
 
-		// Latest protocol version with multiple transactions.
+		// Latest protocol version with multiple transactions in WitnessEncoding.
 		{
-			multiTx,
-			multiTx,
-			multiTxEncoded,
+			multiWitnessTx,
+			multiWitnessTx,
+			multiWitnessTxEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with no transactions.
@@ -320,13 +320,13 @@ func TestTxWire(t *testing.T) {
 			BaseEncoding,
 		},
 
-		// Protocol version BIP0035Version with multiple transactions.
+		// Protocol version BIP0035Version with multiple transactions in WitnessEncoding.
 		{
-			multiTx,
-			multiTx,
-			multiTxEncoded,
+			multiWitnessTx,
+			multiWitnessTx,
+			multiWitnessTxEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with no transactions.
@@ -338,13 +338,13 @@ func TestTxWire(t *testing.T) {
 			BaseEncoding,
 		},
 
-		// Protocol version BIP0031Version with multiple transactions.
+		// Protocol version BIP0031Version with multiple transactions in WitnessEncoding.
 		{
-			multiTx,
-			multiTx,
-			multiTxEncoded,
+			multiWitnessTx,
+			multiWitnessTx,
+			multiWitnessTxEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion with no transactions.
@@ -356,13 +356,13 @@ func TestTxWire(t *testing.T) {
 			BaseEncoding,
 		},
 
-		// Protocol version NetAddressTimeVersion with multiple transactions.
+		// Protocol version NetAddressTimeVersion with multiple transactions in WitnessEncoding.
 		{
-			multiTx,
-			multiTx,
-			multiTxEncoded,
+			multiWitnessTx,
+			multiWitnessTx,
+			multiWitnessTxEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with no transactions.
@@ -374,13 +374,13 @@ func TestTxWire(t *testing.T) {
 			BaseEncoding,
 		},
 
-		// Protocol version MultipleAddressVersion with multiple transactions.
+		// Protocol version MultipleAddressVersion with multiple transactions in WitnessEncoding.
 		{
-			multiTx,
-			multiTx,
-			multiTxEncoded,
+			multiWitnessTx,
+			multiWitnessTx,
+			multiWitnessTxEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
