@@ -144,7 +144,7 @@ func TestGetHeadersWire(t *testing.T) {
 			noLocators,
 			noLocatorsEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Latest protocol version with multiple block locators.
@@ -153,7 +153,7 @@ func TestGetHeadersWire(t *testing.T) {
 			multiLocators,
 			multiLocatorsEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with no block locators.
@@ -162,7 +162,7 @@ func TestGetHeadersWire(t *testing.T) {
 			noLocators,
 			noLocatorsEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with multiple block locators.
@@ -171,7 +171,7 @@ func TestGetHeadersWire(t *testing.T) {
 			multiLocators,
 			multiLocatorsEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with no block locators.
@@ -180,7 +180,7 @@ func TestGetHeadersWire(t *testing.T) {
 			noLocators,
 			noLocatorsEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Versionwith multiple block locators.
@@ -189,7 +189,7 @@ func TestGetHeadersWire(t *testing.T) {
 			multiLocators,
 			multiLocatorsEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion with no block locators.
@@ -198,7 +198,7 @@ func TestGetHeadersWire(t *testing.T) {
 			noLocators,
 			noLocatorsEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion multiple block locators.
@@ -207,7 +207,7 @@ func TestGetHeadersWire(t *testing.T) {
 			multiLocators,
 			multiLocatorsEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with no block locators.
@@ -216,7 +216,7 @@ func TestGetHeadersWire(t *testing.T) {
 			noLocators,
 			noLocatorsEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion multiple block locators.
@@ -225,7 +225,7 @@ func TestGetHeadersWire(t *testing.T) {
 			multiLocators,
 			multiLocatorsEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -336,15 +336,15 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in protocol version.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in block locator hash count.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, WitnessEncoding, 4, io.ErrShortWrite, io.EOF},
 		// Force error in block locator hashes.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, WitnessEncoding, 5, io.ErrShortWrite, io.EOF},
 		// Force error in stop hash.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 69, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, WitnessEncoding, 69, io.ErrShortWrite, io.EOF},
 		// Force error with greater than max block locator hashes.
-		{maxGetHeaders, maxGetHeadersEncoded, pver, BaseEncoding, 7, wireErr, wireErr},
+		{maxGetHeaders, maxGetHeadersEncoded, pver, WitnessEncoding, 7, wireErr, wireErr},
 	}
 
 	t.Logf("Running %d tests", len(tests))

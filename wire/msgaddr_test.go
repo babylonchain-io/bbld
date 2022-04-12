@@ -151,7 +151,7 @@ func TestAddrWire(t *testing.T) {
 			noAddr,
 			noAddrEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Latest protocol version with multiple addresses.
@@ -160,7 +160,7 @@ func TestAddrWire(t *testing.T) {
 			multiAddr,
 			multiAddrEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion-1 with no addresses.
@@ -169,7 +169,7 @@ func TestAddrWire(t *testing.T) {
 			noAddr,
 			noAddrEncoded,
 			MultipleAddressVersion - 1,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -265,14 +265,14 @@ func TestAddrWireErrors(t *testing.T) {
 	}{
 		// Latest protocol version with intentional read/write errors.
 		// Force error in addresses count
-		{baseAddr, baseAddrEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseAddr, baseAddrEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in address list.
-		{baseAddr, baseAddrEncoded, pver, BaseEncoding, 1, io.ErrShortWrite, io.EOF},
+		{baseAddr, baseAddrEncoded, pver, WitnessEncoding, 1, io.ErrShortWrite, io.EOF},
 		// Force error with greater than max inventory vectors.
-		{maxAddr, maxAddrEncoded, pver, BaseEncoding, 3, wireErr, wireErr},
+		{maxAddr, maxAddrEncoded, pver, WitnessEncoding, 3, wireErr, wireErr},
 		// Force error with greater than max inventory vectors for
 		// protocol versions before multiple addresses were allowed.
-		{maxAddr, maxAddrEncoded, pverMA - 1, BaseEncoding, 3, wireErr, wireErr},
+		{maxAddr, maxAddrEncoded, pverMA - 1, WitnessEncoding, 3, wireErr, wireErr},
 	}
 
 	t.Logf("Running %d tests", len(tests))

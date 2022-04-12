@@ -53,7 +53,7 @@ func TestVerAckWire(t *testing.T) {
 			msgVerAck,
 			msgVerAckEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version.
@@ -62,7 +62,7 @@ func TestVerAckWire(t *testing.T) {
 			msgVerAck,
 			msgVerAckEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version.
@@ -71,7 +71,7 @@ func TestVerAckWire(t *testing.T) {
 			msgVerAck,
 			msgVerAckEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion.
@@ -80,7 +80,7 @@ func TestVerAckWire(t *testing.T) {
 			msgVerAck,
 			msgVerAckEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion.
@@ -89,7 +89,7 @@ func TestVerAckWire(t *testing.T) {
 			msgVerAck,
 			msgVerAckEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 

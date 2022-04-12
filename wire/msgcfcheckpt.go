@@ -135,7 +135,7 @@ func (msg *MsgCFCheckpt) Deserialize(r io.Reader) error {
 	// At the current time, there is no difference between the wire encoding
 	// and the stable long-term storage format.  As a result, make use of
 	// BtcDecode.
-	return msg.BtcDecode(r, 0, BaseEncoding)
+	return msg.BtcDecode(r, 0, WitnessEncoding)
 }
 
 // Command returns the protocol command string for the message.  This is part

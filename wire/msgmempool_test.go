@@ -11,7 +11,7 @@ import (
 
 func TestMemPool(t *testing.T) {
 	pver := ProtocolVersion
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	// Ensure the command is expected value.
 	wantCmd := "mempool"

@@ -125,7 +125,7 @@ func TestGetDataWire(t *testing.T) {
 			NoInv,
 			NoInvEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Latest protocol version with multiple inv vectors.
@@ -134,7 +134,7 @@ func TestGetDataWire(t *testing.T) {
 			MultiInv,
 			MultiInvEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version no inv vectors.
@@ -143,7 +143,7 @@ func TestGetDataWire(t *testing.T) {
 			NoInv,
 			NoInvEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with multiple inv vectors.
@@ -152,7 +152,7 @@ func TestGetDataWire(t *testing.T) {
 			MultiInv,
 			MultiInvEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version no inv vectors.
@@ -161,7 +161,7 @@ func TestGetDataWire(t *testing.T) {
 			NoInv,
 			NoInvEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with multiple inv vectors.
@@ -170,7 +170,7 @@ func TestGetDataWire(t *testing.T) {
 			MultiInv,
 			MultiInvEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion no inv vectors.
@@ -179,7 +179,7 @@ func TestGetDataWire(t *testing.T) {
 			NoInv,
 			NoInvEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion with multiple inv vectors.
@@ -188,7 +188,7 @@ func TestGetDataWire(t *testing.T) {
 			MultiInv,
 			MultiInvEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion no inv vectors.
@@ -197,7 +197,7 @@ func TestGetDataWire(t *testing.T) {
 			NoInv,
 			NoInvEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with multiple inv vectors.
@@ -206,7 +206,7 @@ func TestGetDataWire(t *testing.T) {
 			MultiInv,
 			MultiInvEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -290,11 +290,11 @@ func TestGetDataWireErrors(t *testing.T) {
 	}{
 		// Latest protocol version with intentional read/write errors.
 		// Force error in inventory vector count
-		{baseGetData, baseGetDataEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseGetData, baseGetDataEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in inventory list.
-		{baseGetData, baseGetDataEncoded, pver, BaseEncoding, 1, io.ErrShortWrite, io.EOF},
+		{baseGetData, baseGetDataEncoded, pver, WitnessEncoding, 1, io.ErrShortWrite, io.EOF},
 		// Force error with greater than max inventory vectors.
-		{maxGetData, maxGetDataEncoded, pver, BaseEncoding, 3, wireErr, wireErr},
+		{maxGetData, maxGetDataEncoded, pver, WitnessEncoding, 3, wireErr, wireErr},
 	}
 
 	t.Logf("Running %d tests", len(tests))

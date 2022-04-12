@@ -126,7 +126,7 @@ func TestBlockWire(t *testing.T) {
 			blockOneBytes,
 			blockOneTxLocs,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version.
@@ -136,7 +136,7 @@ func TestBlockWire(t *testing.T) {
 			blockOneBytes,
 			blockOneTxLocs,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version.
@@ -146,7 +146,7 @@ func TestBlockWire(t *testing.T) {
 			blockOneBytes,
 			blockOneTxLocs,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion.
@@ -156,7 +156,7 @@ func TestBlockWire(t *testing.T) {
 			blockOneBytes,
 			blockOneTxLocs,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion.
@@ -166,7 +166,7 @@ func TestBlockWire(t *testing.T) {
 			blockOneBytes,
 			blockOneTxLocs,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 		// TODO(roasbeef): add case for witnessy block
 	}
@@ -220,21 +220,21 @@ func TestBlockWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in prev block hash.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 4, io.ErrShortWrite, io.EOF},
 		// Force error in merkle root.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 36, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 36, io.ErrShortWrite, io.EOF},
 		// Force error in timestamp.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 68, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 68, io.ErrShortWrite, io.EOF},
 		// Force error in difficulty bits.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 72, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 72, io.ErrShortWrite, io.EOF},
 		// Force error in header nonce.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 76, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 76, io.ErrShortWrite, io.EOF},
 		// Force error in transaction count.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 80, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 80, io.ErrShortWrite, io.EOF},
 		// Force error in transactions.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 81, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, WitnessEncoding, 81, io.ErrShortWrite, io.EOF},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -420,7 +420,7 @@ func TestBlockOverflowErrors(t *testing.T) {
 				0x01, 0xe3, 0x62, 0x99, // Nonce
 				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 				0xff, // TxnCount
-			}, pver, BaseEncoding, &MessageError{},
+			}, pver, WitnessEncoding, &MessageError{},
 		},
 	}
 

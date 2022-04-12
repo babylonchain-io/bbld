@@ -76,7 +76,7 @@ func TestFilterClearWire(t *testing.T) {
 			msgFilterClear,
 			msgFilterClearEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0037Version + 1.
@@ -85,7 +85,7 @@ func TestFilterClearWire(t *testing.T) {
 			msgFilterClear,
 			msgFilterClearEncoded,
 			BIP0037Version + 1,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0037Version.
@@ -94,7 +94,7 @@ func TestFilterClearWire(t *testing.T) {
 			msgFilterClear,
 			msgFilterClearEncoded,
 			BIP0037Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -150,7 +150,7 @@ func TestFilterClearWireErrors(t *testing.T) {
 		// Force error due to unsupported protocol version.
 		{
 			baseFilterClear, baseFilterClearEncoded,
-			pverNoFilterClear, BaseEncoding, 4, wireErr, wireErr,
+			pverNoFilterClear, WitnessEncoding, 4, wireErr, wireErr,
 		},
 	}
 

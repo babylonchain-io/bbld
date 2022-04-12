@@ -16,7 +16,7 @@ import (
 // TestMsgAlert tests the MsgAlert API.
 func TestMsgAlert(t *testing.T) {
 	pver := ProtocolVersion
-	encoding := BaseEncoding
+	encoding := WitnessEncoding
 	serializedpayload := []byte("some message")
 	signature := []byte("some sig")
 
@@ -107,7 +107,7 @@ func TestMsgAlertWire(t *testing.T) {
 			baseMsgAlert,
 			baseMsgAlertEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version.
@@ -116,7 +116,7 @@ func TestMsgAlertWire(t *testing.T) {
 			baseMsgAlert,
 			baseMsgAlertEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version.
@@ -125,7 +125,7 @@ func TestMsgAlertWire(t *testing.T) {
 			baseMsgAlert,
 			baseMsgAlertEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion.
@@ -134,7 +134,7 @@ func TestMsgAlertWire(t *testing.T) {
 			baseMsgAlert,
 			baseMsgAlertEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion.
@@ -143,7 +143,7 @@ func TestMsgAlertWire(t *testing.T) {
 			baseMsgAlert,
 			baseMsgAlertEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -182,7 +182,7 @@ func TestMsgAlertWire(t *testing.T) {
 // of MsgAlert to confirm error paths work correctly.
 func TestMsgAlertWireErrors(t *testing.T) {
 	pver := ProtocolVersion
-	encoding := BaseEncoding
+	encoding := WitnessEncoding
 
 	baseMsgAlert := NewMsgAlert([]byte("some payload"), []byte("somesig"))
 	baseMsgAlertEncoded := []byte{
@@ -203,13 +203,13 @@ func TestMsgAlertWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in payload length.
-		{baseMsgAlert, baseMsgAlertEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseMsgAlert, baseMsgAlertEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in payload.
-		{baseMsgAlert, baseMsgAlertEncoded, pver, BaseEncoding, 1, io.ErrShortWrite, io.EOF},
+		{baseMsgAlert, baseMsgAlertEncoded, pver, WitnessEncoding, 1, io.ErrShortWrite, io.EOF},
 		// Force error in signature length.
-		{baseMsgAlert, baseMsgAlertEncoded, pver, BaseEncoding, 13, io.ErrShortWrite, io.EOF},
+		{baseMsgAlert, baseMsgAlertEncoded, pver, WitnessEncoding, 13, io.ErrShortWrite, io.EOF},
 		// Force error in signature.
-		{baseMsgAlert, baseMsgAlertEncoded, pver, BaseEncoding, 14, io.ErrShortWrite, io.EOF},
+		{baseMsgAlert, baseMsgAlertEncoded, pver, WitnessEncoding, 14, io.ErrShortWrite, io.EOF},
 	}
 
 	t.Logf("Running %d tests", len(tests))

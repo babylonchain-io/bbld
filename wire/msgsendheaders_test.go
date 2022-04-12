@@ -16,7 +16,7 @@ import (
 // version.
 func TestSendHeaders(t *testing.T) {
 	pver := ProtocolVersion
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	// Ensure the command is expected value.
 	wantCmd := "sendheaders"
@@ -76,7 +76,7 @@ func TestSendHeaders(t *testing.T) {
 func TestSendHeadersBIP0130(t *testing.T) {
 	// Use the protocol version just prior to SendHeadersVersion changes.
 	pver := SendHeadersVersion - 1
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	msg := NewMsgSendHeaders()
 
@@ -100,7 +100,7 @@ func TestSendHeadersBIP0130(t *testing.T) {
 // TestSendHeadersCrossProtocol tests the MsgSendHeaders API when encoding with
 // the latest protocol version and decoding with SendHeadersVersion.
 func TestSendHeadersCrossProtocol(t *testing.T) {
-	enc := BaseEncoding
+	enc := WitnessEncoding
 	msg := NewMsgSendHeaders()
 
 	// Encode with latest protocol version.
@@ -139,7 +139,7 @@ func TestSendHeadersWire(t *testing.T) {
 			msgSendHeaders,
 			msgSendHeadersEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version SendHeadersVersion+1
@@ -148,7 +148,7 @@ func TestSendHeadersWire(t *testing.T) {
 			msgSendHeaders,
 			msgSendHeadersEncoded,
 			SendHeadersVersion + 1,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version SendHeadersVersion
@@ -157,7 +157,7 @@ func TestSendHeadersWire(t *testing.T) {
 			msgSendHeaders,
 			msgSendHeadersEncoded,
 			SendHeadersVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 

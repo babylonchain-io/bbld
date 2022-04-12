@@ -107,7 +107,7 @@ func TestHeadersWire(t *testing.T) {
 			noHeaders,
 			noHeadersEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Latest protocol version with one header.
@@ -116,7 +116,7 @@ func TestHeadersWire(t *testing.T) {
 			oneHeader,
 			oneHeaderEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with no headers.
@@ -125,7 +125,7 @@ func TestHeadersWire(t *testing.T) {
 			noHeaders,
 			noHeadersEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with one header.
@@ -134,7 +134,7 @@ func TestHeadersWire(t *testing.T) {
 			oneHeader,
 			oneHeaderEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with no headers.
@@ -143,7 +143,7 @@ func TestHeadersWire(t *testing.T) {
 			noHeaders,
 			noHeadersEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with one header.
@@ -152,7 +152,7 @@ func TestHeadersWire(t *testing.T) {
 			oneHeader,
 			oneHeaderEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 		// Protocol version NetAddressTimeVersion with no headers.
 		{
@@ -160,7 +160,7 @@ func TestHeadersWire(t *testing.T) {
 			noHeaders,
 			noHeadersEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion with one header.
@@ -169,7 +169,7 @@ func TestHeadersWire(t *testing.T) {
 			oneHeader,
 			oneHeaderEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with no headers.
@@ -178,7 +178,7 @@ func TestHeadersWire(t *testing.T) {
 			noHeaders,
 			noHeadersEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with one header.
@@ -187,7 +187,7 @@ func TestHeadersWire(t *testing.T) {
 			oneHeader,
 			oneHeaderEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -303,15 +303,15 @@ func TestHeadersWireErrors(t *testing.T) {
 	}{
 		// Latest protocol version with intentional read/write errors.
 		// Force error in header count.
-		{oneHeader, oneHeaderEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{oneHeader, oneHeaderEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in block header.
-		{oneHeader, oneHeaderEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{oneHeader, oneHeaderEncoded, pver, WitnessEncoding, 5, io.ErrShortWrite, io.EOF},
 		// Force error with greater than max headers.
-		{maxHeaders, maxHeadersEncoded, pver, BaseEncoding, 3, wireErr, wireErr},
+		{maxHeaders, maxHeadersEncoded, pver, WitnessEncoding, 3, wireErr, wireErr},
 		// Force error with number of transactions.
-		{transHeader, transHeaderEncoded, pver, BaseEncoding, 81, io.ErrShortWrite, io.EOF},
+		{transHeader, transHeaderEncoded, pver, WitnessEncoding, 81, io.ErrShortWrite, io.EOF},
 		// Force error with included transactions.
-		{transHeader, transHeaderEncoded, pver, BaseEncoding, len(transHeaderEncoded), nil, wireErr},
+		{transHeader, transHeaderEncoded, pver, WitnessEncoding, len(transHeaderEncoded), nil, wireErr},
 	}
 
 	t.Logf("Running %d tests", len(tests))

@@ -19,7 +19,7 @@ import (
 // TestMerkleBlock tests the MsgMerkleBlock API.
 func TestMerkleBlock(t *testing.T) {
 	pver := ProtocolVersion
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	// Block 1 header.
 	prevHash := &blockOne.Header.PrevBlock
@@ -124,7 +124,7 @@ func TestMerkleBlockCrossProtocol(t *testing.T) {
 
 	// Encode with latest protocol version.
 	var buf bytes.Buffer
-	err := msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
+	err := msg.BtcEncode(&buf, ProtocolVersion, WitnessEncoding)
 	if err != nil {
 		t.Errorf("encode of NewMsgFilterLoad failed %v err <%v>", msg,
 			err)
@@ -132,7 +132,7 @@ func TestMerkleBlockCrossProtocol(t *testing.T) {
 
 	// Decode with old protocol version.
 	var readmsg MsgFilterLoad
-	err = readmsg.BtcDecode(&buf, BIP0031Version, BaseEncoding)
+	err = readmsg.BtcDecode(&buf, BIP0031Version, WitnessEncoding)
 	if err == nil {
 		t.Errorf("decode of MsgFilterLoad succeeded when it shouldn't have %v",
 			msg)
@@ -152,13 +152,13 @@ func TestMerkleBlockWire(t *testing.T) {
 		// Latest protocol version.
 		{
 			&merkleBlockOne, &merkleBlockOne, merkleBlockOneBytes,
-			ProtocolVersion, BaseEncoding,
+			ProtocolVersion, WitnessEncoding,
 		},
 
 		// Protocol version BIP0037Version.
 		{
 			&merkleBlockOne, &merkleBlockOne, merkleBlockOneBytes,
-			BIP0037Version, BaseEncoding,
+			BIP0037Version, WitnessEncoding,
 		},
 	}
 
@@ -214,63 +214,63 @@ func TestMerkleBlockWireErrors(t *testing.T) {
 	}{
 		// Force error in version.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 0,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 0,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in prev block hash.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 4,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 4,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in merkle root.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 36,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 36,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in timestamp.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 68,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 68,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in difficulty bits.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 72,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 72,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in header nonce.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 76,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 76,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in transaction count.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 80,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 80,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in num hashes.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 84,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 84,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in hashes.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 85,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 85,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in num flag bytes.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 117,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 117,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in flag bytes.
 		{
-			&merkleBlockOne, merkleBlockOneBytes, pver, BaseEncoding, 118,
+			&merkleBlockOne, merkleBlockOneBytes, pver, WitnessEncoding, 118,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error due to unsupported protocol version.
 		{
 			&merkleBlockOne, merkleBlockOneBytes, pverNoMerkleBlock,
-			BaseEncoding, 119, wireErr, wireErr,
+			WitnessEncoding, 119, wireErr, wireErr,
 		},
 	}
 
@@ -352,9 +352,9 @@ func TestMerkleBlockOverflowErrors(t *testing.T) {
 		err  error           // Expected error
 	}{
 		// Block that claims to have more than max allowed hashes.
-		{exceedMaxHashes, pver, BaseEncoding, &MessageError{}},
+		{exceedMaxHashes, pver, WitnessEncoding, &MessageError{}},
 		// Block that claims to have more than max allowed flag bytes.
-		{exceedMaxFlagBytes, pver, BaseEncoding, &MessageError{}},
+		{exceedMaxFlagBytes, pver, WitnessEncoding, &MessageError{}},
 	}
 
 	t.Logf("Running %d tests", len(tests))

@@ -50,7 +50,7 @@ func TestPing(t *testing.T) {
 func TestPingBIP0031(t *testing.T) {
 	// Use the protocol version just prior to BIP0031Version changes.
 	pver := BIP0031Version
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	nonce, err := RandomUint64()
 	if err != nil {
@@ -107,14 +107,14 @@ func TestPingCrossProtocol(t *testing.T) {
 
 	// Encode with latest protocol version.
 	var buf bytes.Buffer
-	err = msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
+	err = msg.BtcEncode(&buf, ProtocolVersion, WitnessEncoding)
 	if err != nil {
 		t.Errorf("encode of MsgPing failed %v err <%v>", msg, err)
 	}
 
 	// Decode with old protocol version.
 	readmsg := NewMsgPing(0)
-	err = readmsg.BtcDecode(&buf, BIP0031Version, BaseEncoding)
+	err = readmsg.BtcDecode(&buf, BIP0031Version, WitnessEncoding)
 	if err != nil {
 		t.Errorf("decode of MsgPing failed [%v] err <%v>", buf, err)
 	}
@@ -142,7 +142,7 @@ func TestPingWire(t *testing.T) {
 			MsgPing{Nonce: 123123}, // 0x1e0f3
 			[]byte{0xf3, 0xe0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version+1
@@ -151,7 +151,7 @@ func TestPingWire(t *testing.T) {
 			MsgPing{Nonce: 456456}, // 0x6f708
 			[]byte{0x08, 0xf7, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00},
 			BIP0031Version + 1,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version
@@ -160,7 +160,7 @@ func TestPingWire(t *testing.T) {
 			MsgPing{Nonce: 0},      // No nonce for pver
 			[]byte{},               // No nonce for pver
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -214,7 +214,7 @@ func TestPingWireErrors(t *testing.T) {
 			&MsgPing{Nonce: 123123}, // 0x1e0f3
 			[]byte{0xf3, 0xe0, 0x01, 0x00},
 			pver,
-			BaseEncoding,
+			WitnessEncoding,
 			2,
 			io.ErrShortWrite,
 			io.ErrUnexpectedEOF,

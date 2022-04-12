@@ -14,7 +14,7 @@ import (
 // TestFilterAddLatest tests the MsgFilterAdd API against the latest protocol
 // version.
 func TestFilterAddLatest(t *testing.T) {
-	enc := BaseEncoding
+	enc := WitnessEncoding
 	pver := ProtocolVersion
 
 	data := []byte{0x01, 0x02}
@@ -128,17 +128,17 @@ func TestFilterAddWireErrors(t *testing.T) {
 		// Latest protocol version with intentional read/write errors.
 		// Force error in data size.
 		{
-			baseFilterAdd, baseFilterAddEncoded, pver, BaseEncoding, 0,
+			baseFilterAdd, baseFilterAddEncoded, pver, WitnessEncoding, 0,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in data.
 		{
-			baseFilterAdd, baseFilterAddEncoded, pver, BaseEncoding, 1,
+			baseFilterAdd, baseFilterAddEncoded, pver, WitnessEncoding, 1,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error due to unsupported protocol version.
 		{
-			baseFilterAdd, baseFilterAddEncoded, pverNoFilterAdd, BaseEncoding, 5,
+			baseFilterAdd, baseFilterAddEncoded, pverNoFilterAdd, WitnessEncoding, 5,
 			wireErr, wireErr,
 		},
 	}

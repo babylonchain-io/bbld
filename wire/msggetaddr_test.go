@@ -54,7 +54,7 @@ func TestGetAddrWire(t *testing.T) {
 			msgGetAddr,
 			msgGetAddrEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version.
@@ -63,7 +63,7 @@ func TestGetAddrWire(t *testing.T) {
 			msgGetAddr,
 			msgGetAddrEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version.
@@ -72,7 +72,7 @@ func TestGetAddrWire(t *testing.T) {
 			msgGetAddr,
 			msgGetAddrEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion.
@@ -81,7 +81,7 @@ func TestGetAddrWire(t *testing.T) {
 			msgGetAddr,
 			msgGetAddrEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion.
@@ -90,7 +90,7 @@ func TestGetAddrWire(t *testing.T) {
 			msgGetAddr,
 			msgGetAddrEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 

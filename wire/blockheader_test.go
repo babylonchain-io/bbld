@@ -91,7 +91,7 @@ func TestBlockHeaderWire(t *testing.T) {
 			baseBlockHdr,
 			baseBlockHdrEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version.
@@ -100,7 +100,7 @@ func TestBlockHeaderWire(t *testing.T) {
 			baseBlockHdr,
 			baseBlockHdrEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version.
@@ -109,7 +109,7 @@ func TestBlockHeaderWire(t *testing.T) {
 			baseBlockHdr,
 			baseBlockHdrEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion.
@@ -118,7 +118,7 @@ func TestBlockHeaderWire(t *testing.T) {
 			baseBlockHdr,
 			baseBlockHdrEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion.
@@ -127,7 +127,7 @@ func TestBlockHeaderWire(t *testing.T) {
 			baseBlockHdr,
 			baseBlockHdrEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 

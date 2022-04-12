@@ -45,7 +45,7 @@ func TestRejectCodeStringer(t *testing.T) {
 // TestRejectLatest tests the MsgPong API against the latest protocol version.
 func TestRejectLatest(t *testing.T) {
 	pver := ProtocolVersion
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	// Create reject message data.
 	rejCommand := (&MsgBlock{}).Command()
@@ -124,7 +124,7 @@ func TestRejectLatest(t *testing.T) {
 func TestRejectBeforeAdded(t *testing.T) {
 	// Use the protocol version just prior to RejectVersion.
 	pver := RejectVersion - 1
-	enc := BaseEncoding
+	enc := WitnessEncoding
 
 	// Create reject message data.
 	rejCommand := (&MsgBlock{}).Command()
@@ -193,14 +193,14 @@ func TestRejectCrossProtocol(t *testing.T) {
 
 	// Encode with latest protocol version.
 	var buf bytes.Buffer
-	err := msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
+	err := msg.BtcEncode(&buf, ProtocolVersion, WitnessEncoding)
 	if err != nil {
 		t.Errorf("encode of MsgReject failed %v err <%v>", msg, err)
 	}
 
 	// Decode with old protocol version.
 	readMsg := MsgReject{}
-	err = readMsg.BtcDecode(&buf, RejectVersion-1, BaseEncoding)
+	err = readMsg.BtcDecode(&buf, RejectVersion-1, WitnessEncoding)
 	if err == nil {
 		t.Errorf("encode of MsgReject succeeded when it shouldn't "+
 			"have %v", msg)
@@ -247,7 +247,7 @@ func TestRejectWire(t *testing.T) {
 				0x6f, 0x6e, // "duplicate version"
 			},
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 		// Latest protocol version rejected command block (has hash).
 		{
@@ -268,7 +268,7 @@ func TestRejectWire(t *testing.T) {
 				0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, // mainNetGenesisHash
 			},
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 	}
 
@@ -334,15 +334,15 @@ func TestRejectWireErrors(t *testing.T) {
 	}{
 		// Latest protocol version with intentional read/write errors.
 		// Force error in reject command.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseReject, baseRejectEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
 		// Force error in reject code.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 6, io.ErrShortWrite, io.EOF},
+		{baseReject, baseRejectEncoded, pver, WitnessEncoding, 6, io.ErrShortWrite, io.EOF},
 		// Force error in reject reason.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 7, io.ErrShortWrite, io.EOF},
+		{baseReject, baseRejectEncoded, pver, WitnessEncoding, 7, io.ErrShortWrite, io.EOF},
 		// Force error in reject hash.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 23, io.ErrShortWrite, io.EOF},
+		{baseReject, baseRejectEncoded, pver, WitnessEncoding, 23, io.ErrShortWrite, io.EOF},
 		// Force error due to unsupported protocol version.
-		{baseReject, baseRejectEncoded, pverNoReject, BaseEncoding, 6, wireErr, wireErr},
+		{baseReject, baseRejectEncoded, pverNoReject, WitnessEncoding, 6, wireErr, wireErr},
 	}
 
 	t.Logf("Running %d tests", len(tests))
