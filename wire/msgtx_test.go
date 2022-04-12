@@ -276,6 +276,15 @@ func TestTxWire(t *testing.T) {
 		0x00, 0x00, 0x00, 0x00, // Lock time
 		0x00, // no commitment
 	}
+	// noTxWitnessEncoded := []byte{
+	// 	0x01, 0x00, 0x00, 0x00, // Version
+	// 	0x00,                   // Marker
+	// 	0x01,                   // Flag
+	// 	0x00,                   // Varint for number of input transactions
+	// 	0x00,                   // Varint for number of output transactions
+	// 	0x00, 0x00, 0x00, 0x00, // Lock time
+	// 	0x00, // no commitment
+	// }
 
 	tests := []struct {
 		in   *MsgTx          // Message to encode
@@ -287,7 +296,8 @@ func TestTxWire(t *testing.T) {
 		// Latest protocol version with no transactions.
 		{
 			noTx,
-			noTx, noTxEncoded,
+			noTx,
+			noTxEncoded,
 			ProtocolVersion,
 			BaseEncoding,
 		},
@@ -378,22 +388,22 @@ func TestTxWire(t *testing.T) {
 	for i, test := range tests {
 		// Encode the message to wire format.
 		var buf bytes.Buffer
-		err := test.in.BtcEncode(&buf, test.pver, test.enc)
-		if err != nil {
+		if err := test.in.BtcEncode(&buf, test.pver, test.enc); err != nil {
 			t.Errorf("BtcEncode #%d error %v", i, err)
 			continue
 		}
-		if !bytes.Equal(buf.Bytes(), test.buf) {
+		gotBytes := buf.Bytes()
+		wantBytes := test.buf
+		if !bytes.Equal(gotBytes, wantBytes) {
 			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
-				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf))
+				spew.Sdump(gotBytes), spew.Sdump(wantBytes))
 			continue
 		}
 
 		// Decode the message from wire format.
 		var msg MsgTx
 		rbuf := bytes.NewReader(test.buf)
-		err = msg.BtcDecode(rbuf, test.pver, test.enc)
-		if err != nil {
+		if err := msg.BtcDecode(rbuf, test.pver, test.enc); err != nil {
 			t.Errorf("BtcDecode #%d error %v", i, err)
 			continue
 		}

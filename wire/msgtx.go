@@ -1008,17 +1008,9 @@ func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) error
 	// number of elements in lists || elem1 || elem2 || ..
 	// but here list can have length either 0 or 1
 	if msg.PosCommitment == nil {
-		err = WriteBool(w, false)
-
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return WriteBool(w, false)
 	} else {
-		err = WriteBool(w, true)
-
-		if err != nil {
+		if err := WriteBool(w, true); err != nil {
 			return err
 		}
 
