@@ -184,13 +184,6 @@ func (msg *MsgBlock) Deserialize(r io.Reader) error {
 	return msg.BtcDecode(r, 0, WitnessEncoding)
 }
 
-// DeserializeNoWitness decodes a block from r into the receiver similar to
-// Deserialize, however DeserializeWitness strips all (if any) witness data
-// from the transactions within the block before encoding them.
-func (msg *MsgBlock) DeserializeNoWitness(r io.Reader) error {
-	return msg.BtcDecode(r, 0, BaseEncoding)
-}
-
 // DeserializeTxLoc decodes r in the same manner Deserialize does, but it takes
 // a byte buffer instead of a generic reader and returns a slice containing the
 // start and length of each transaction within the raw data that is being
@@ -325,15 +318,6 @@ func (msg *MsgBlock) Serialize(w io.Writer) error {
 	// each of the transactions should be serialized using the witness
 	// serialization structure defined in BIP0141.
 	return msg.BtcEncode(w, 0, WitnessEncoding)
-}
-
-// SerializeNoWitness encodes a block to w using an identical format to
-// Serialize, with all (if any) witness data stripped from all transactions.
-// This method is provided in additon to the regular Serialize, in order to
-// allow one to selectively encode transaction witness data to non-upgraded
-// peers which are unaware of the new encoding.
-func (msg *MsgBlock) SerializeNoWitness(w io.Writer) error {
-	return msg.BtcEncode(w, 0, BaseEncoding)
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the
