@@ -105,9 +105,10 @@ func CalcPriority(tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint, nextBlockH
 	// outputs.  This is the same logic used in the reference
 	// implementation.
 	//
-	// The constant overhead for a txin is 41 bytes since the previous
-	// outpoint is 36 bytes + 4 bytes for the sequence + 1 byte + 1 byte for tx commitment bool
-	//  the signature script length.
+	// The constant overhead for a txin is 43 bytes since the previous
+	// outpoint is 36 bytes + 4 bytes for the sequence + 1 byte for the
+	// signature script length + 1 byte for the number of witness + 1 byte
+	// for tx commitment bool
 	//
 	// A compressed pubkey pay-to-script-hash redemption with a maximum len
 	// signature is of the form:
@@ -118,7 +119,7 @@ func CalcPriority(tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint, nextBlockH
 	overhead := 0
 	for _, txIn := range tx.TxIn {
 		// Max inputs + size can't possibly overflow here.
-		overhead += 42 + minInt(110, len(txIn.SignatureScript))
+		overhead += 43 + minInt(110, len(txIn.SignatureScript))
 	}
 
 	serializedTxSize := tx.SerializeSize()

@@ -1138,11 +1138,11 @@ func Generate(includeLargeReorg bool) (tests [][]TestInstance, err error) {
 	//                \-> b24(6) -> b25(7)
 	g.setTip("b15")
 	g.nextBlock("b24", outs[6], func(b *wire.MsgBlock) {
-		bytesToMaxSize := maxBlockSize - b.SerializeSize() - 3
+		bytesToMaxSize := maxBlockSize - b.SerializeSizeStripped() - 3 // witness is off-chain
 		sizePadScript := repeatOpcode(0x00, bytesToMaxSize+1)
 		replaceSpendScript(sizePadScript)(b)
 	})
-	g.assertTipBlockSize(maxBlockSize + 1)
+	g.assertTipBlockSize(maxBlockSize + 1 + 2) // 2 is the witness-related stuff
 	rejected(blockchain.ErrBlockTooBig)
 
 	// Parent was rejected, so this block must either be an orphan or
@@ -2059,7 +2059,7 @@ func Generate(includeLargeReorg bool) (tests [][]TestInstance, err error) {
 	for i := int32(0); i < numLargeReorgBlocks; i++ {
 		chain1TipName = fmt.Sprintf("br%d", i)
 		g.nextBlock(chain1TipName, &reorgSpend, func(b *wire.MsgBlock) {
-			bytesToMaxSize := maxBlockSize - b.SerializeSize() - 3
+			bytesToMaxSize := maxBlockSize - b.SerializeSizeStripped() - 3
 			sizePadScript := repeatOpcode(0x00, bytesToMaxSize)
 			replaceSpendScript(sizePadScript)(b)
 		})

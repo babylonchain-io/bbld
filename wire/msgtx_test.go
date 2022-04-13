@@ -139,7 +139,7 @@ func TestTx(t *testing.T) {
 func TestTxHash(t *testing.T) {
 	// Hash of first transaction from bitcoin block 113875 with additional 0 added
 	// at the end of encoded tx to represent lack of commitment
-	hashStr := "6b5ba5f43dade347684447ced7ad39305117f93ee5d2cc59cbeca49494ccaa94"
+	hashStr := "7886b95642f3d1814bf757429dd90bde3631d58407790dd94eca3bf500a8c9f9"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -189,13 +189,13 @@ func TestTxHash(t *testing.T) {
 func TestWTxSha(t *testing.T) {
 	// Both Hashes are from block 23157 in a past version of segnet, with additional
 	// 0 in the encoded version of tx to represent lack of commitment
-	hashStrTxid := "025441dfc8ed8e830ec1934b39261d8c90039cb778cef636150690a545acf7cc"
+	hashStrTxid := "eda8c81dea47233efd3752be56ebe7fc8976ec2f2083dc04d473a3d849e6909f"
 	wantHashTxid, err := chainhash.NewHashFromStr(hashStrTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
 		return
 	}
-	hashStrWTxid := "39b97f540b0a673056dfab1a92aa0a9685e720631716aec2fd6827145ae0093c"
+	hashStrWTxid := "eda8c81dea47233efd3752be56ebe7fc8976ec2f2083dc04d473a3d849e6909f"
 	wantHashWTxid, err := chainhash.NewHashFromStr(hashStrWTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
@@ -276,14 +276,6 @@ func TestTxWire(t *testing.T) {
 		0x00, 0x00, 0x00, 0x00, // Lock time
 		0x00, // no commitment
 	}
-	// noTxWitnessEncoded := []byte{
-	// 	0x01, 0x00, 0x00, 0x00, // Version
-	// 	0x00, 0x01              // Marker and flag
-	// 	0x00,                   // Varint for number of input transactions
-	// 	0x00,                   // Varint for number of output transactions
-	// 	0x00, 0x00, 0x00, 0x00, // Lock time
-	// 	0x00, // no commitment
-	// }
 
 	tests := []struct {
 		in   *MsgTx          // Message to encode
@@ -298,7 +290,7 @@ func TestTxWire(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			ProtocolVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Latest protocol version with multiple transactions in WitnessEncoding.
@@ -316,7 +308,7 @@ func TestTxWire(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			BIP0035Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0035Version with multiple transactions in WitnessEncoding.
@@ -334,7 +326,7 @@ func TestTxWire(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			BIP0031Version,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version BIP0031Version with multiple transactions in WitnessEncoding.
@@ -352,7 +344,7 @@ func TestTxWire(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			NetAddressTimeVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version NetAddressTimeVersion with multiple transactions in WitnessEncoding.
@@ -370,7 +362,7 @@ func TestTxWire(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			MultipleAddressVersion,
-			BaseEncoding,
+			WitnessEncoding,
 		},
 
 		// Protocol version MultipleAddressVersion with multiple transactions in WitnessEncoding.
@@ -433,36 +425,34 @@ func TestTxWireErrors(t *testing.T) {
 	}{
 		// Force error in version.
 		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 0, io.ErrShortWrite, io.EOF},
-		// Force error in flag.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 4, io.ErrShortWrite, io.EOF},
 		// Force error in number of transaction inputs.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 6, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 4, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input previous block hash.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 7, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 5, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input previous block output index.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 39, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 37, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input signature script length.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 43, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 41, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input signature script.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 44, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 42, io.ErrShortWrite, io.EOF},
 		// Force error in transaction input sequence.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 48, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 46, io.ErrShortWrite, io.EOF},
 		// Force error in number of transaction outputs.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 49, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 47, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output value.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 57, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 55, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output pk script length.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 58, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 56, io.ErrShortWrite, io.EOF},
 		// Force error in Version 0 witness program + OP_DATA_20 + pk hash.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 80, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 78, io.ErrShortWrite, io.EOF},
 		// Force error in stack size.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 81, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 79, io.ErrShortWrite, io.EOF},
 		// Force error in stack item #1 size + content.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 152, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 150, io.ErrShortWrite, io.EOF},
 		// Force error in stack item #2 size + content.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 186, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 184, io.ErrShortWrite, io.EOF},
 		// Force error in transaction output lock time.
-		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 190, io.ErrShortWrite, io.EOF},
+		{multiWitnessTx, multiWitnessTxEncoded, pver, WitnessEncoding, 188, io.ErrShortWrite, io.EOF},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -513,7 +503,7 @@ func TestTxSerialize(t *testing.T) {
 			noTx,
 			noTxEncoded,
 			nil,
-			false,
+			true,
 		},
 
 		// Multiple transactions.
@@ -522,7 +512,7 @@ func TestTxSerialize(t *testing.T) {
 			multiTx,
 			multiTxEncoded,
 			multiTxPkScriptLocs,
-			false,
+			true,
 		},
 		// Multiple outputs witness transaction.
 		{
@@ -671,7 +661,7 @@ func TestTxOverflowErrors(t *testing.T) {
 				0x00, 0x00, 0x00, 0x01, // Version
 				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 				0xff, // Varint for number of input transactions
-			}, pver, BaseEncoding, txVer, &MessageError{},
+			}, pver, WitnessEncoding, txVer, &MessageError{},
 		},
 
 		// Transaction that claims to have ~uint64(0) outputs.
@@ -681,7 +671,7 @@ func TestTxOverflowErrors(t *testing.T) {
 				0x00, // Varint for number of input transactions
 				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 				0xff, // Varint for number of output transactions
-			}, pver, BaseEncoding, txVer, &MessageError{},
+			}, pver, WitnessEncoding, txVer, &MessageError{},
 		},
 
 		// Transaction that has an input with a signature script that
@@ -689,7 +679,6 @@ func TestTxOverflowErrors(t *testing.T) {
 		{
 			[]byte{
 				0x00, 0x00, 0x00, 0x01, // Version
-				0x00, 0x01, // Marker and flag
 				0x01, // Varint for number of input transactions
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -706,7 +695,6 @@ func TestTxOverflowErrors(t *testing.T) {
 		{
 			[]byte{
 				0x00, 0x00, 0x00, 0x01, // Version
-				0x00, 0x01, // Marker and flag
 				0x01, // Varint for number of input transactions
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -789,7 +777,7 @@ func TestTxWitnessSize(t *testing.T) {
 	}{
 		// Transaction with an input which includes witness data, and
 		// one output.
-		{multiWitnessTx, 191},
+		{multiWitnessTx, 189},
 	}
 
 	t.Logf("Running %d tests", len(tests))
@@ -910,25 +898,25 @@ func TestTxWithCommitmentSerialization(t *testing.T) {
 	}{
 		// 11 + 138
 		{noTx, 149},
-		// 211 + 152
-		{&tx1, 363},
+		// 211 + 153
+		{&tx1, 364},
 	}
 
 	for i, test := range tests {
 		if test.in.SerializeSize() != test.size {
-			t.Errorf("Bad Tx size %d got #%d want %d", i, test.in.SerializeSize(), test.size)
+			t.Errorf("Bad Tx #%d size got %d want %d", i, test.in.SerializeSize(), test.size)
 			continue
 		}
 
 		var buf bytes.Buffer
-		if err := test.in.BtcEncode(&buf, 0, BaseEncoding); err != nil {
+		if err := test.in.BtcEncode(&buf, 0, WitnessEncoding); err != nil {
 			t.Errorf("BtcEncode tx with commitment #%d error %v", i, err)
 			continue
 		}
 
 		var msgTx MsgTx
 		rbuf := bytes.NewReader(buf.Bytes())
-		if err := msgTx.BtcDecode(rbuf, 0, BaseEncoding); err != nil {
+		if err := msgTx.BtcDecode(rbuf, 0, WitnessEncoding); err != nil {
 			t.Errorf("BtcDecode tx with commitment #%d error %v", i, err)
 			continue
 		}
@@ -1062,6 +1050,7 @@ var multiTxEncoded = []byte{
 	0xa6,                   // 65-byte signature
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
+	0x00, // Witness size
 	0x00, // No commitment
 }
 
@@ -1127,9 +1116,7 @@ var multiWitnessTx = &MsgTx{
 // tests.
 var multiWitnessTxEncoded = []byte{
 	0x1, 0x0, 0x0, 0x0, // Version
-	TxFlagMarker, // Marker byte indicating 0 inputs, or a segwit encoded tx
-	WitnessFlag,  // Flag byte
-	0x1,          // Varint for number of inputs
+	0x1, // Varint for number of inputs
 	0xa5, 0x33, 0x52, 0xd5, 0x13, 0x57, 0x66, 0xf0,
 	0x30, 0x76, 0x59, 0x74, 0x18, 0x26, 0x3d, 0xa2,
 	0xd9, 0xc9, 0x58, 0x31, 0x59, 0x68, 0xfe, 0xa8,
@@ -1171,9 +1158,7 @@ var multiWitnessTxEncoded = []byte{
 // being set to 0x01, the flag is 0x00, which should trigger a decoding error.
 var multiWitnessTxEncodedNonZeroFlag = []byte{
 	0x1, 0x0, 0x0, 0x0, // Version
-	TxFlagMarker, // Marker byte indicating 0 inputs, or a segwit encoded tx
-	0x0,          // Incorrect flag byte (should be 0x01)
-	0x1,          // Varint for number of inputs
+	0x1, // Varint for number of inputs
 	0xa5, 0x33, 0x52, 0xd5, 0x13, 0x57, 0x66, 0xf0,
 	0x30, 0x76, 0x59, 0x74, 0x18, 0x26, 0x3d, 0xa2,
 	0xd9, 0xc9, 0x58, 0x31, 0x59, 0x68, 0xfe, 0xa8,
@@ -1212,4 +1197,4 @@ var multiWitnessTxEncodedNonZeroFlag = []byte{
 
 // multiTxPkScriptLocs is the location information for the public key scripts
 // located in multiWitnessTx.
-var multiWitnessTxPkScriptLocs = []int{58}
+var multiWitnessTxPkScriptLocs = []int{56}

@@ -250,7 +250,7 @@ func discardInput(r io.Reader, n uint32) {
 // information and returns the number of bytes written.    This function is the
 // same as WriteMessage except it also returns the number of bytes written.
 func WriteMessageN(w io.Writer, msg Message, pver uint32, btcnet BitcoinNet) (int, error) {
-	return WriteMessageWithEncodingN(w, msg, pver, btcnet, BaseEncoding)
+	return WriteMessageWithEncodingN(w, msg, pver, btcnet, WitnessEncoding)
 }
 
 // WriteMessage writes a bitcoin Message to w including the necessary header
@@ -433,7 +433,7 @@ func ReadMessageWithEncodingN(r io.Reader, pver uint32, btcnet BitcoinNet,
 // message.  This function is the same as ReadMessage except it also returns the
 // number of bytes read.
 func ReadMessageN(r io.Reader, pver uint32, btcnet BitcoinNet) (int, Message, []byte, error) {
-	return ReadMessageWithEncodingN(r, pver, btcnet, BaseEncoding)
+	return ReadMessageWithEncodingN(r, pver, btcnet, WitnessEncoding)
 }
 
 // ReadMessage reads, validates, and parses the next bitcoin Message from r for

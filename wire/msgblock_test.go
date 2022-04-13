@@ -73,7 +73,7 @@ func TestBlock(t *testing.T) {
 // hashes from a block accurately.
 func TestBlockTxHashes(t *testing.T) {
 	// Block 1, transaction 1 hash. Modified for additional commitment byte
-	hashStr := "43fd8d83964b51e9147591dd52ee5467f102d78460caf6332912850b32449f25"
+	hashStr := "0ad6899c54df098e828f1569c192ae9a406b5543b4df9b47f11aa7d4c0814f78"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -478,7 +478,13 @@ func TestBlockSerializeSize(t *testing.T) {
 		serializedSize := test.in.SerializeSize()
 		if serializedSize != test.size {
 			t.Errorf("MsgBlock.SerializeSize: #%d got: %d, want: "+
-				"%d", i, serializedSize, test.size)
+				"%d", i, serializedSize, test.size) // TODO-babylon
+
+			// var buf bytes.Buffer
+			// blockOne.BtcEncode(&buf, 0, WitnessEncoding)
+
+			// t.Errorf("MsgBlock.SerializeSize: #%d got: %v, want: "+
+			// 	"%v", i, spew.Sdump(buf.Bytes()), spew.Sdump(blockOneBytes))
 			continue
 		}
 	}
@@ -610,10 +616,11 @@ var blockOneBytes = []byte{
 	0xac,                   // OP_CHECKSIG
 	0x00, 0x00, 0x00, 0x00, // Lock time
 	0x00, // No commitment in transaction
+	0x00, // No witness
 	0x00, // No addtional pos data
 }
 
 // Transaction location information for block one transactions.
 var blockOneTxLocs = []TxLoc{
-	{TxStart: 81, TxLen: 135}, // Transaction len is 134 standard bytes + 1 byte for no commitment info
+	{TxStart: 81, TxLen: 136}, // Transaction len is 135 standard bytes + 1 byte for no commitment info
 }
