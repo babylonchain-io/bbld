@@ -543,11 +543,7 @@ func TestTxSerialize(t *testing.T) {
 		// Deserialize the transaction.
 		var tx MsgTx
 		rbuf := bytes.NewReader(test.buf)
-		if test.witness {
-			err = tx.Deserialize(rbuf)
-		} else {
-			err = tx.DeserializeNoWitness(rbuf)
-		}
+		err = tx.Deserialize(rbuf)
 		if err != nil {
 			t.Errorf("Deserialize #%d error %v", i, err)
 			continue
