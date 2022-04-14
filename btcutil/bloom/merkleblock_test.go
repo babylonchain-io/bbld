@@ -25,7 +25,7 @@ func TestMerkleBlock3(t *testing.T) {
 		"0000ffffffff08044c86041b020a02ffffffff0100f2052a01000000434" +
 		"104ecd3229b0571c3be876feaac0442a9f13c5a572742927af1dc623353" +
 		"ecf8c202225f64868137a18cdd85cbbb4c74fbccfd4f49639cf1bdc94a5" +
-		"672bb15ad5d4cac000000000000"
+		"672bb15ad5d4cac00000000000000"
 	blockBytes, err := hex.DecodeString(blockStr)
 	if err != nil {
 		t.Errorf("TestMerkleBlock3 DecodeString failed: %v", err)
