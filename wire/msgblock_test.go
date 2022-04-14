@@ -73,7 +73,7 @@ func TestBlock(t *testing.T) {
 // hashes from a block accurately.
 func TestBlockTxHashes(t *testing.T) {
 	// Block 1, transaction 1 hash. Modified for additional commitment byte
-	hashStr := "0ad6899c54df098e828f1569c192ae9a406b5543b4df9b47f11aa7d4c0814f78"
+	hashStr := "43fd8d83964b51e9147591dd52ee5467f102d78460caf6332912850b32449f25"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)

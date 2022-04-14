@@ -502,7 +502,7 @@ func (msg *MsgTx) TxHash() chainhash.Hash {
 	// is being out of memory or due to nil pointers, both of which would
 	// cause a run-time panic.
 	buf := bytes.NewBuffer(make([]byte, 0, msg.SerializeSizeStripped()))
-	_ = msg.Serialize(buf)
+	_ = msg.SerializeNoWitness(buf)
 	return chainhash.DoubleHashH(buf.Bytes())
 }
 
@@ -835,6 +835,14 @@ func (msg *MsgTx) Deserialize(r io.Reader) error {
 	return msg.BtcDecode(r, 0, WitnessEncoding)
 }
 
+// DeserializeNoWitness decodes a transaction from r into the receiver, where
+// the transaction encoding format within r MUST NOT utilize the new
+// serialization format created to encode transaction bearing witness data
+// within inputs.
+func (msg *MsgTx) DeserializeNoWitness(r io.Reader) error {
+	return msg.BtcDecode(r, 0, BaseEncoding)
+}
+
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding.
 // This is part of the Message interface implementation.
 // See Serialize for encoding transactions to be stored to disk, such as in a
@@ -924,6 +932,13 @@ func (msg *MsgTx) Serialize(w io.Writer) error {
 	// serialized according to the new serialization structure defined in
 	// BIP0144.
 	return msg.BtcEncode(w, 0, WitnessEncoding)
+}
+
+// SerializeNoWitness encodes the transaction to w in an identical manner to
+// Serialize, however even if the source transaction has inputs with witness
+// data, the old serialization format will still be used.
+func (msg *MsgTx) SerializeNoWitness(w io.Writer) error {
+	return msg.BtcEncode(w, 0, BaseEncoding)
 }
 
 // HasWitness returns false if none of the inputs within the transaction

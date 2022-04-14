@@ -139,7 +139,7 @@ func TestTx(t *testing.T) {
 func TestTxHash(t *testing.T) {
 	// Hash of first transaction from bitcoin block 113875 with additional 0 added
 	// at the end of encoded tx to represent lack of commitment
-	hashStr := "7886b95642f3d1814bf757429dd90bde3631d58407790dd94eca3bf500a8c9f9"
+	hashStr := "6b5ba5f43dade347684447ced7ad39305117f93ee5d2cc59cbeca49494ccaa94"
 	wantHash, err := chainhash.NewHashFromStr(hashStr)
 	if err != nil {
 		t.Errorf("NewHashFromStr: %v", err)
@@ -189,7 +189,7 @@ func TestTxHash(t *testing.T) {
 func TestWTxSha(t *testing.T) {
 	// Both Hashes are from block 23157 in a past version of segnet, with additional
 	// 0 in the encoded version of tx to represent lack of commitment
-	hashStrTxid := "eda8c81dea47233efd3752be56ebe7fc8976ec2f2083dc04d473a3d849e6909f"
+	hashStrTxid := "025441dfc8ed8e830ec1934b39261d8c90039cb778cef636150690a545acf7cc"
 	wantHashTxid, err := chainhash.NewHashFromStr(hashStrTxid)
 	if err != nil {
 		t.Errorf("NewShaHashFromStr: %v", err)
