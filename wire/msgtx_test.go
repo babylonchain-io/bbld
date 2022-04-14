@@ -377,6 +377,7 @@ func TestTxWire(t *testing.T) {
 
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
+		t.Logf("Running test #%d", i)
 		// Encode the message to wire format.
 		var buf bytes.Buffer
 		if err := test.in.BtcEncode(&buf, test.pver, test.enc); err != nil {

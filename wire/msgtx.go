@@ -709,42 +709,12 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 	}
 
 	if enc == WitnessEncoding {
+		// read witness for each tx input
 		for _, txin := range msg.TxIn {
-			// For each input, the witness is encoded as a stack
-			// with one or more items. Therefore, we first read a
-			// varint which encodes the number of stack items.
-			witCount, err := ReadVarInt(r, pver)
+			txin.Witness, err = readTxWitness(r, pver, msg.Version)
 			if err != nil {
 				returnScriptBuffers()
 				return err
-			}
-
-			// Prevent a possible memory exhaustion attack by
-			// limiting the witCount value to a sane upper bound.
-			if witCount > maxWitnessItemsPerInput {
-				returnScriptBuffers()
-				str := fmt.Sprintf("too many witness items to fit "+
-					"into max message size [count %d, max %d]",
-					witCount, maxWitnessItemsPerInput)
-				return messageError("MsgTx.BtcDecode", str)
-			}
-
-			if witCount == 0 {
-				txin.Witness = nil
-			} else {
-				txin.Witness = make([][]byte, witCount)
-				// Then for witCount number of stack items, each item
-				// has a varint length prefix, followed by the witness
-				// item itself.
-				for j := uint64(0); j < witCount; j++ {
-					txin.Witness[j], err = readScript(r, pver,
-						maxWitnessItemSize, "script witness item") // TODO-babylon: problem here
-					if err != nil {
-						returnScriptBuffers()
-						return err
-					}
-					totalScriptSize += uint64(len(txin.Witness[j]))
-				}
 			}
 		}
 	}
@@ -809,24 +779,24 @@ func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error
 		// Return the temporary script buffer to the pool.
 		scriptPool.Return(signatureScript)
 
-		for j := 0; j < len(msg.TxIn[i].Witness); j++ {
-			// Copy each item within the witness stack for this
-			// input into the contiguous buffer at the appropriate
-			// offset.
-			witnessElem := msg.TxIn[i].Witness[j]
-			copy(scripts[offset:], witnessElem)
+		// for j := 0; j < len(msg.TxIn[i].Witness); j++ {
+		// 	// Copy each item within the witness stack for this
+		// 	// input into the contiguous buffer at the appropriate
+		// 	// offset.
+		// 	witnessElem := msg.TxIn[i].Witness[j]
+		// 	copy(scripts[offset:], witnessElem)
 
-			// Reset the witness item within the stack to the slice
-			// of the contiguous buffer where the witness lives.
-			witnessElemSize := uint64(len(witnessElem))
-			end := offset + witnessElemSize
-			msg.TxIn[i].Witness[j] = scripts[offset:end:end]
-			offset += witnessElemSize
+		// 	// Reset the witness item within the stack to the slice
+		// 	// of the contiguous buffer where the witness lives.
+		// 	witnessElemSize := uint64(len(witnessElem))
+		// 	end := offset + witnessElemSize
+		// 	msg.TxIn[i].Witness[j] = scripts[offset:end:end]
+		// 	offset += witnessElemSize
 
-			// Return the temporary buffer used for the witness stack
-			// item to the pool.
-			scriptPool.Return(witnessElem)
-		}
+		// 	// Return the temporary buffer used for the witness stack
+		// 	// item to the pool.
+		// 	scriptPool.Return(witnessElem)
+		// }
 	}
 	for i := 0; i < len(msg.TxOut); i++ {
 		// Copy the public key script into the contiguous buffer at the
@@ -913,6 +883,7 @@ func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) error
 	// encoded is desired, then encode the witness for each of the inputs
 	// within the transaction.
 	if enc == WitnessEncoding {
+		// write each witness
 		for _, ti := range msg.TxIn {
 			if err := writeTxWitness(w, pver, msg.Version, ti.Witness); err != nil {
 				return err
@@ -1222,13 +1193,59 @@ func WriteTxOut(w io.Writer, pver uint32, version int32, to *TxOut) error {
 // writeTxWitness encodes the bitcoin protocol encoding for a transaction
 // input's witness into to w.
 func writeTxWitness(w io.Writer, pver uint32, version int32, wit [][]byte) error {
-	if err := WriteVarInt(w, pver, uint64(len(wit))); err != nil {
+	witCount := uint64(len(wit))
+	// Prevent a possible memory exhaustion attack by
+	// limiting the witCount value to a sane upper bound.
+	if witCount > maxWitnessItemsPerInput {
+		str := fmt.Sprintf("too many witness items to fit "+
+			"into max message size [count %d, max %d]",
+			witCount, maxWitnessItemsPerInput)
+		return messageError("writeTxWitness", str)
+	}
+
+	// For each input, the witness is encoded as a stack
+	// with one or more items. Therefore, we first read a
+	// varint which encodes the number of stack items.
+	if err := WriteVarInt(w, pver, witCount); err != nil {
 		return err
 	}
+	// Then for witCount number of stack items, each item
+	// has a varint length prefix, followed by the witness
+	// item itself.
 	for _, item := range wit {
 		if err := WriteVarBytes(w, pver, item); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// readTxWitness reads the witness data of a tx input.
+func readTxWitness(r io.Reader, pver uint32, version int32) ([][]byte, error) {
+	var witCount uint64
+	var err error
+	if witCount, err = ReadVarInt(r, pver); err != nil {
+		return nil, err
+	}
+	// Prevent a possible memory exhaustion attack by
+	// limiting the witCount value to a sane upper bound.
+	if witCount > maxWitnessItemsPerInput {
+		str := fmt.Sprintf("too many witness items to fit "+
+			"into max message size [count %d, max %d]",
+			witCount, maxWitnessItemsPerInput)
+		return nil, messageError("writeTxWitness", str)
+	}
+	if witCount == 0 {
+		return nil, nil
+	} else {
+		var wit [][]byte
+		for i := uint64(0); i < witCount; i++ {
+			var witItem []byte
+			if witItem, err = ReadVarBytes(r, pver, maxWitnessItemSize, "script witness item"); err != nil {
+				return nil, err
+			}
+			wit = append(wit, witItem)
+		}
+		return wit, nil
+	}
 }

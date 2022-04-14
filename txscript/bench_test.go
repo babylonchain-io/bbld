@@ -7,7 +7,6 @@ package txscript
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"testing"
 
 	"github.com/babylonchain-io/bbld/chaincfg"
@@ -17,7 +16,7 @@ import (
 var (
 	// manyInputsBenchTx is a transaction that contains a lot of inputs which is
 	// useful for benchmarking signature hash calculation.
-	manyInputsBenchTx wire.MsgTx
+	// manyInputsBenchTx wire.MsgTx
 
 	// A mock previous output script to use in the signing benchmark.
 	prevOutScript = hexToBytes("a914f5916158e3e2c4551c1796708db8367207ed13bb87")
@@ -25,52 +24,52 @@ var (
 
 func init() {
 	// tx 620f57c92cf05a7f7e7f7d28255d5f7089437bc48e34dcfebf7751d08b7fb8f5
-	txHex, err := ioutil.ReadFile("data/many_inputs_tx.hex")
-	if err != nil {
-		panic(fmt.Sprintf("unable to read benchmark tx file: %v", err))
-	}
+	// txHex, err := ioutil.ReadFile("data/many_inputs_tx.hex")
+	// if err != nil {
+	// 	panic(fmt.Sprintf("unable to read benchmark tx file: %v", err))
+	// }
 
-	txBytes := hexToBytes(string(txHex))
-	err = manyInputsBenchTx.Deserialize(bytes.NewReader(txBytes))
-	if err != nil {
-		panic(err)
-	}
+	// txBytes := hexToBytes(string(txHex))
+	// err = manyInputsBenchTx.Deserialize(bytes.NewReader(txBytes))
+	// if err != nil {
+	// 	panic(err)
+	// }
 }
 
 // BenchmarkCalcSigHash benchmarks how long it takes to calculate the signature
 // hashes for all inputs of a transaction with many inputs.
-func BenchmarkCalcSigHash(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < len(manyInputsBenchTx.TxIn); j++ {
-			_, err := CalcSignatureHash(prevOutScript, SigHashAll,
-				&manyInputsBenchTx, j)
-			if err != nil {
-				b.Fatalf("failed to calc signature hash: %v", err)
-			}
-		}
-	}
-}
+// func BenchmarkCalcSigHash(b *testing.B) {
+// 	b.ReportAllocs()
+// 	for i := 0; i < b.N; i++ {
+// 		for j := 0; j < len(manyInputsBenchTx.TxIn); j++ {
+// 			_, err := CalcSignatureHash(prevOutScript, SigHashAll,
+// 				&manyInputsBenchTx, j)
+// 			if err != nil {
+// 				b.Fatalf("failed to calc signature hash: %v", err)
+// 			}
+// 		}
+// 	}
+// }
 
 // BenchmarkCalcWitnessSigHash benchmarks how long it takes to calculate the
 // witness signature hashes for all inputs of a transaction with many inputs.
-func BenchmarkCalcWitnessSigHash(b *testing.B) {
-	sigHashes := NewTxSigHashes(&manyInputsBenchTx)
+// func BenchmarkCalcWitnessSigHash(b *testing.B) {
+// 	sigHashes := NewTxSigHashes(&manyInputsBenchTx)
 
-	b.ResetTimer()
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < len(manyInputsBenchTx.TxIn); j++ {
-			_, err := CalcWitnessSigHash(
-				prevOutScript, sigHashes, SigHashAll,
-				&manyInputsBenchTx, j, 5,
-			)
-			if err != nil {
-				b.Fatalf("failed to calc signature hash: %v", err)
-			}
-		}
-	}
-}
+// 	b.ResetTimer()
+// 	b.ReportAllocs()
+// 	for i := 0; i < b.N; i++ {
+// 		for j := 0; j < len(manyInputsBenchTx.TxIn); j++ {
+// 			_, err := CalcWitnessSigHash(
+// 				prevOutScript, sigHashes, SigHashAll,
+// 				&manyInputsBenchTx, j, 5,
+// 			)
+// 			if err != nil {
+// 				b.Fatalf("failed to calc signature hash: %v", err)
+// 			}
+// 		}
+// 	}
+// }
 
 // genComplexScript returns a script comprised of half as many opcodes as the
 // maximum allowed followed by as many max size data pushes fit without

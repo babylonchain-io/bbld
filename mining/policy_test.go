@@ -89,9 +89,7 @@ func TestCalcPriority(t *testing.T) {
 		Version: 1,
 		TxIn: []*wire.TxIn{{
 			PreviousOutPoint: wire.OutPoint{
-				Hash: *newHashFromStr("923885c049fefef5b49ccc" +
-					"6cdbb405e2429191b43473158f16d35a9908" +
-					"0f09b5"),
+				Hash:  commonSourceTx1.TxHash(),
 				Index: 0,
 			},
 			SignatureScript: hexToBytes("47304402204e45e16932b8af" +
