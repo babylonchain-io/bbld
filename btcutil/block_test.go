@@ -145,10 +145,10 @@ func TestBlock(t *testing.T) {
 
 	// Transaction offsets and length for the transaction in Block100000.
 	wantTxLocs := []wire.TxLoc{
-		{TxStart: 81, TxLen: 145},
-		{TxStart: 226, TxLen: 260},
-		{TxStart: 486, TxLen: 258},
-		{TxStart: 744, TxLen: 226},
+		{TxStart: 81, TxLen: 143},
+		{TxStart: 224, TxLen: 261},
+		{TxStart: 485, TxLen: 259},
+		{TxStart: 744, TxLen: 227},
 	}
 
 	// Ensure the transaction location information is accurate.
